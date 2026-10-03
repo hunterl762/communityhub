@@ -1,0 +1,5 @@
+const router=require('express').Router();const db=require('../db');
+const types=['FailRP','VDM','RDM','NLR','Metagaming','Powergaming','Combat Logging','Player Report','Staff Report','Bug Report','Other'];
+router.get('/',(req,res)=>res.render('reports/form',{types}));
+router.post('/',async(req,res,next)=>{try{const {report_type,reported_name,occurred_at,description,evidence_url}=req.body;if(!types.includes(report_type)||!description)return res.status(400).render('message',{title:'Invalid report',message:'Please provide a valid report type and description.'});const [r]=await db.query("INSERT INTO reports(reporter_user_id,report_type,reported_name,occurred_at,description,evidence_url,status) VALUES(NULL,?,?,?,?,?,'open')",[report_type,reported_name||null,occurred_at||null,description,evidence_url||null]);res.render('message',{title:'Report submitted',message:`Report #${r.insertId} has been submitted for staff review.`});}catch(e){next(e);}});
+module.exports=router;
