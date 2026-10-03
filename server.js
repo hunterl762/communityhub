@@ -16,6 +16,8 @@ app.use(express.urlencoded({extended:true})); app.use(express.json()); app.use(e
 app.use(session({secret:process.env.SESSION_SECRET||'change-this',resave:false,saveUninitialized:false,cookie:{httpOnly:true,sameSite:'lax',secure:process.env.NODE_ENV==='production',maxAge:1000*60*60*12}}));
 app.use((req,res,next)=>{res.locals.user=req.session.user||null;next();});
 app.get('/',async(req,res)=>{let stats={applications:0,reports:0,events:0,documents:0};try{const [[a],[r],[e],[d]]=await Promise.all([pool.query('SELECT COUNT(*) count FROM applications'),pool.query('SELECT COUNT(*) count FROM reports'),pool.query('SELECT COUNT(*) count FROM calendar_events WHERE start_at>=NOW()'),pool.query('SELECT COUNT(*) count FROM documents')]);stats={applications:a[0].count,reports:r[0].count,events:e[0].count,documents:d[0].count};}catch{}res.render('index',{stats});});
+app.use('/auth',require('./src/routes/auth'));
+app.use('/account',require('./src/routes/account'));
 app.use('/applications',require('./src/routes/applications'));
 app.use('/reports',require('./src/routes/reports'));
 app.use('/calendar',require('./src/routes/calendar'));
