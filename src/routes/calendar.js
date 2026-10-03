@@ -1,0 +1,5 @@
+const router=require('express').Router();const db=require('../db');
+router.get('/',async(req,res)=>{const [events]=await db.query("SELECT * FROM calendar_events WHERE end_at>=DATE_SUB(NOW(),INTERVAL 1 DAY) ORDER BY start_at LIMIT 250");res.render('calendar/index',{events});});
+router.get('/api/events',async(req,res)=>{const [rows]=await db.query('SELECT id,title,event_type,start_at AS start,end_at AS end,description,location FROM calendar_events WHERE start_at BETWEEN ? AND ?',[req.query.start||'1970-01-01',req.query.end||'2100-01-01']);res.json(rows);});
+router.post('/admin/events',async(req,res,next)=>{try{const {title,event_type,start_at,end_at,description,location,department_id,max_attendees}=req.body;await db.query('INSERT INTO calendar_events(title,event_type,start_at,end_at,description,location,department_id,max_attendees,created_by) VALUES(?,?,?,?,?,?,?,?,NULL)',[title,event_type||'community',start_at,end_at||start_at,description||null,location||null,department_id||null,max_attendees||null]);res.redirect('/calendar');}catch(e){next(e);}});
+module.exports=router;
