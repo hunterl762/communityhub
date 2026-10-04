@@ -1,30 +1,53 @@
 const express=require('express');
-const bcrypt=require('bcrypt');
 const crypto=require('crypto');
 const axios=require('axios');
 const pool=require('../db');
-const {sendVerificationEmail}=require('../services/email');
 const router=express.Router();
 
-function requireAuth(req,res,next){if(!req.session.user)return res.redirect('/auth/login');next();}
-function safeUser(row){return {id:row.id,username:row.username,display_name:row.display_name,email:row.email,email_verified:!!row.email_verified,discord_id:row.discord_id,avatar_url:row.avatar_url,role:row.role};}
-function newVerificationToken(){const raw=crypto.randomBytes(32).toString('hex');return {raw,hash:crypto.createHash('sha256').update(raw).digest('hex')};}
-async function issueVerification(user){if(!user.email||user.email_verified)return false;const {raw,hash}=newVerificationToken();await pool.query('UPDATE email_verification_tokens SET used_at=NOW() WHERE user_id=? AND used_at IS NULL',[user.id]);await pool.query('INSERT INTO email_verification_tokens(user_id,token_hash,expires_at) VALUES(?,?,DATE_ADD(NOW(),INTERVAL 60 MINUTE))',[user.id,hash]);try{await sendVerificationEmail({email:user.email,name:user.display_name||user.username,token:raw});return true;}catch(e){console.error('[Verification email]',e);return false;}}
+function safeUser(row){return {id:row.id,username:row.username,display_name:row.display_name,email:row.email,discord_id:row.discord_id,avatar_url:row.avatar_url,role:row.role};}
 
 router.get('/login',(req,res)=>res.render('auth/login',{error:req.query.error||null}));
-router.get('/register',(req,res)=>res.render('auth/register',{error:null}));
-router.post('/register',async(req,res)=>{try{const email=String(req.body.email||'').trim().toLowerCase();const username=String(req.body.username||'').trim();const password=String(req.body.password||'');if(!email||!username||password.length<8)return res.status(400).render('auth/register',{error:'Enter a username, valid email and password of at least 8 characters.'});const [exists]=await pool.query('SELECT id FROM users WHERE email=? LIMIT 1',[email]);if(exists.length)return res.status(409).render('auth/register',{error:'An account with that email already exists.'});const hash=await bcrypt.hash(password,12);const [result]=await pool.query('INSERT INTO users(username,display_name,email,password_hash,email_verified) VALUES(?,?,?,?,0)',[username,username,email,hash]);const [rows]=await pool.query('SELECT * FROM users WHERE id=?',[result.insertId]);req.session.user=safeUser(rows[0]);const sent=await issueVerification(rows[0]);res.redirect(`/auth/verification-sent?sent=${sent?1:0}`);}catch(e){console.error(e);res.status(500).render('auth/register',{error:'Unable to create the account.'});}});
-router.post('/login',async(req,res)=>{try{const email=String(req.body.email||'').trim().toLowerCase();const password=String(req.body.password||'');const [rows]=await pool.query('SELECT * FROM users WHERE email=? AND is_active=1 LIMIT 1',[email]);if(!rows.length||!rows[0].password_hash||!(await bcrypt.compare(password,rows[0].password_hash)))return res.status(401).render('auth/login',{error:'Invalid email or password.'});req.session.user=safeUser(rows[0]);res.redirect('/account');}catch(e){console.error(e);res.status(500).render('auth/login',{error:'Unable to sign in.'});}});
-router.get('/verification-sent',requireAuth,(req,res)=>res.render('auth/verification-sent',{sent:req.query.sent==='1'}));
-router.post('/resend-verification',requireAuth,async(req,res)=>{try{const [rows]=await pool.query('SELECT * FROM users WHERE id=?',[req.session.user.id]);if(!rows.length)return res.redirect('/auth/login');if(rows[0].email_verified)return res.redirect('/account?verified=1');const [recent]=await pool.query('SELECT id FROM email_verification_tokens WHERE user_id=? AND created_at>DATE_SUB(NOW(),INTERVAL 2 MINUTE) LIMIT 1',[rows[0].id]);if(recent.length)return res.redirect('/auth/verification-sent?sent=1');const sent=await issueVerification(rows[0]);res.redirect(`/auth/verification-sent?sent=${sent?1:0}`);}catch(e){console.error(e);res.redirect('/auth/verification-sent?sent=0');}});
-router.get('/verify-email',async(req,res)=>{try{const raw=String(req.query.token||'');if(!raw)return res.status(400).render('auth/verification-result',{ok:false,message:'This verification link is invalid.'});const hash=crypto.createHash('sha256').update(raw).digest('hex');const [tokens]=await pool.query('SELECT t.id,t.user_id FROM email_verification_tokens t WHERE t.token_hash=? AND t.used_at IS NULL AND t.expires_at>NOW() LIMIT 1',[hash]);if(!tokens.length)return res.status(400).render('auth/verification-result',{ok:false,message:'This verification link is invalid or has expired. Sign in and request another verification email.'});await pool.query('UPDATE users SET email_verified=1 WHERE id=?',[tokens[0].user_id]);await pool.query('UPDATE email_verification_tokens SET used_at=NOW() WHERE user_id=? AND used_at IS NULL',[tokens[0].user_id]);if(req.session.user&&Number(req.session.user.id)===Number(tokens[0].user_id))req.session.user.email_verified=true;res.render('auth/verification-result',{ok:true,message:'Your email address has been verified successfully.'});}catch(e){console.error(e);res.status(500).render('auth/verification-result',{ok:false,message:'We could not verify your email right now.'});}});
+router.get('/register',(req,res)=>res.redirect('/auth/discord'));
+router.post('/login',(req,res)=>res.redirect('/auth/discord'));
+router.post('/register',(req,res)=>res.redirect('/auth/discord'));
 
-function beginDiscord(req,res,mode){if(!process.env.DISCORD_CLIENT_ID||!process.env.DISCORD_CALLBACK_URL)return res.redirect('/auth/login?error=Discord+OAuth+is+not+configured');const state=crypto.randomBytes(24).toString('hex');req.session.discordOAuth={state,mode};const p=new URLSearchParams({client_id:process.env.DISCORD_CLIENT_ID,redirect_uri:process.env.DISCORD_CALLBACK_URL,response_type:'code',scope:'identify email',state,prompt:'consent'});res.redirect(`https://discord.com/oauth2/authorize?${p}`);}
-router.get('/discord',(req,res)=>beginDiscord(req,res,'login'));
-router.get('/discord/link',requireAuth,(req,res)=>beginDiscord(req,res,'link'));
-router.get('/discord/callback',async(req,res)=>{try{const pending=req.session.discordOAuth;if(!pending||!req.query.state||req.query.state!==pending.state||!req.query.code)return res.redirect('/auth/login?error=Discord+authentication+failed');delete req.session.discordOAuth;const body=new URLSearchParams({client_id:process.env.DISCORD_CLIENT_ID,client_secret:process.env.DISCORD_CLIENT_SECRET,grant_type:'authorization_code',code:String(req.query.code),redirect_uri:process.env.DISCORD_CALLBACK_URL});const token=await axios.post('https://discord.com/api/oauth2/token',body,{headers:{'Content-Type':'application/x-www-form-urlencoded'}});const profile=(await axios.get('https://discord.com/api/users/@me',{headers:{Authorization:`Bearer ${token.data.access_token}`}})).data;const avatar=profile.avatar?`https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.png`:null;
-if(pending.mode==='link'){const [used]=await pool.query('SELECT id FROM users WHERE discord_id=? AND id<>? LIMIT 1',[profile.id,req.session.user.id]);if(used.length)return res.redirect('/account?error=That+Discord+account+is+already+linked');await pool.query('UPDATE users SET discord_id=?,discord_username=?,avatar_url=? WHERE id=?',[profile.id,profile.username,avatar,req.session.user.id]);const [rows]=await pool.query('SELECT * FROM users WHERE id=?',[req.session.user.id]);req.session.user=safeUser(rows[0]);return res.redirect('/account?linked=1');}
-const [existing]=await pool.query('SELECT * FROM users WHERE discord_id=? LIMIT 1',[profile.id]);let user;if(existing.length){user=existing[0];}else{const email=profile.email?String(profile.email).toLowerCase():null;let byEmail=[];if(email)[byEmail]=await pool.query('SELECT * FROM users WHERE email=? LIMIT 1',[email]);if(byEmail.length){await pool.query('UPDATE users SET discord_id=?,discord_username=?,avatar_url=?,email_verified=IF(email=?,?,email_verified) WHERE id=?',[profile.id,profile.username,avatar,email,profile.verified?1:0,byEmail[0].id]);[user]=(await pool.query('SELECT * FROM users WHERE id=?',[byEmail[0].id]))[0];}else{const [result]=await pool.query('INSERT INTO users(discord_id,discord_username,username,display_name,avatar_url,email,email_verified) VALUES(?,?,?,?,?,?,?)',[profile.id,profile.username,profile.username,profile.global_name||profile.username,avatar,email,profile.verified?1:0]);[user]=(await pool.query('SELECT * FROM users WHERE id=?',[result.insertId]))[0];}}
-req.session.user=safeUser(user);res.redirect('/account');}catch(e){console.error('[Discord OAuth]',e.response?.data||e);res.redirect('/auth/login?error=Discord+authentication+failed');}});
+function beginDiscord(req,res){
+  if(!process.env.DISCORD_CLIENT_ID||!process.env.DISCORD_CALLBACK_URL)return res.redirect('/auth/login?error=Discord+OAuth+is+not+configured');
+  const state=crypto.randomBytes(24).toString('hex');
+  req.session.discordOAuth={state};
+  const p=new URLSearchParams({client_id:process.env.DISCORD_CLIENT_ID,redirect_uri:process.env.DISCORD_CALLBACK_URL,response_type:'code',scope:'identify email',state,prompt:'consent'});
+  res.redirect(`https://discord.com/oauth2/authorize?${p}`);
+}
+router.get('/discord',beginDiscord);
+router.get('/discord/callback',async(req,res)=>{
+  try{
+    const pending=req.session.discordOAuth;
+    if(!pending||!req.query.state||req.query.state!==pending.state||!req.query.code)return res.redirect('/auth/login?error=Discord+authentication+failed');
+    delete req.session.discordOAuth;
+    const body=new URLSearchParams({client_id:process.env.DISCORD_CLIENT_ID,client_secret:process.env.DISCORD_CLIENT_SECRET,grant_type:'authorization_code',code:String(req.query.code),redirect_uri:process.env.DISCORD_CALLBACK_URL});
+    const token=await axios.post('https://discord.com/api/oauth2/token',body,{headers:{'Content-Type':'application/x-www-form-urlencoded'}});
+    const profile=(await axios.get('https://discord.com/api/users/@me',{headers:{Authorization:`Bearer ${token.data.access_token}`}})).data;
+    const avatar=profile.avatar?`https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.png`:null;
+    const email=profile.email?String(profile.email).toLowerCase():null;
+    const [existing]=await pool.query('SELECT * FROM users WHERE discord_id=? LIMIT 1',[profile.id]);
+    let user;
+    if(existing.length){
+      await pool.query('UPDATE users SET discord_username=?,username=?,display_name=?,avatar_url=?,email=COALESCE(?,email),email_verified=? WHERE id=?',[profile.username,profile.username,profile.global_name||profile.username,avatar,email,profile.verified?1:0,existing[0].id]);
+      [user]=(await pool.query('SELECT * FROM users WHERE id=?',[existing[0].id]))[0];
+    }else{
+      let byEmail=[];
+      if(email)[byEmail]=await pool.query('SELECT * FROM users WHERE email=? LIMIT 1',[email]);
+      if(byEmail.length){
+        await pool.query('UPDATE users SET discord_id=?,discord_username=?,username=?,display_name=?,avatar_url=?,email_verified=? WHERE id=?',[profile.id,profile.username,profile.username,profile.global_name||profile.username,avatar,profile.verified?1:0,byEmail[0].id]);
+        [user]=(await pool.query('SELECT * FROM users WHERE id=?',[byEmail[0].id]))[0];
+      }else{
+        const [result]=await pool.query('INSERT INTO users(discord_id,discord_username,username,display_name,avatar_url,email,email_verified) VALUES(?,?,?,?,?,?,?)',[profile.id,profile.username,profile.username,profile.global_name||profile.username,avatar,email,profile.verified?1:0]);
+        [user]=(await pool.query('SELECT * FROM users WHERE id=?',[result.insertId]))[0];
+      }
+    }
+    req.session.user=safeUser(user);
+    res.redirect('/account');
+  }catch(e){console.error('[Discord OAuth]',e.response?.data||e);res.redirect('/auth/login?error=Discord+authentication+failed');}
+});
 router.post('/logout',(req,res)=>req.session.destroy(()=>res.redirect('/')));
 module.exports=router;
