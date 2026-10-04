@@ -12,3 +12,7 @@ body{background:var(--bg);font-family:Segoe UI,Inter,system-ui,sans-serif;color:
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 
 .hub-topbar{flex-direction:row;align-items:center}.hub-navigation{scrollbar-width:thin;scrollbar-color:#526880 transparent}
+
+.document-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px}.document-actions form{display:block}.document-actions .btn{font-size:12px;padding:8px 12px}
+
+.hub-app .document-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}.document-grid .card{min-width:0;overflow-wrap:anywhere}
