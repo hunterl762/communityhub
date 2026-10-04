@@ -70,7 +70,7 @@ The default is a dry run. The importer is idempotent, checks paths/file sizes/pa
 
 Members can use FiveM > Server status to view availability, player counts, observed 30-day uptime percentages, online/offline duration totals and the latest 100 availability periods. First observation starts history; earlier uptime is not fabricated. The website checks every 15 seconds and records outages from the 90-second heartbeat expiry; heartbeat writes and status transitions are serialized per server in SQL. If monitoring restarts after a gap, a stale last heartbeat bounds the outage until the next heartbeat. Heartbeat availability measures the integration reporting in, not a game-client connection test.
 
-Admin review counts and FiveM status/patrol totals refresh from SQL every 15 seconds while their page is visible, leaving editing forms intact. The member status page refreshes every 15 seconds. The tablet refreshes profile and operations data every 30 seconds while open; background FiveM heartbeats continue at Config.HeartbeatSeconds. Restart the installed resource after updating client/main.lua.
+Admin review counts and FiveM status/patrol totals refresh from SQL every 15 seconds while their page is visible, leaving editing forms intact. The member status page refreshes every 15 seconds. The tablet refreshes profile/branding every 30 seconds, and dispatch every ten seconds while visible or on duty with the HUD enabled; background FiveM heartbeats continue at Config.HeartbeatSeconds. Restart the installed resource after updating client/main.lua.
 
 
 ### Patrol time clock, game time and private admin chat (migration 008)
@@ -81,16 +81,20 @@ The tablet shows GTA game time from client clock natives. The server requests on
 
 Admin Chat is a server-specific, SQL-backed tablet channel for linked admin, management and owner accounts. Every read/send checks the current SQL role using the license derived server-side from the player source. Normal members, reviewers, command and staff cannot read/send. No chat is included in general tablet data or broadcast to all players. Messages are limited to 1,000 characters, ten sends per 30 seconds per user, and the latest 100 messages are polled every five seconds while open.
 
-### Community Hub UI v2 — Civic
+### Community Hub UI v2 — Theme C
 
-Civic is the default visual system: a navy application sidebar, light-gray workspace, restrained department accents and a compact dark tablet. Visitors see a separate public homepage; signed-in users land on /overview. The role-aware sidebar and page finder contain only permitted existing tools. Mobile uses Overview / Live / Reports bottom navigation plus a keyboard-accessible drawer. Website Light / Dark / System preferences use a first-party cookie; no application files or records are stored in localStorage.
+Theme C is the default visual system: a navy application sidebar, light-gray workspace, restrained department accents and a compact dark tablet. Visitors see a separate public homepage; signed-in users land on /overview. The role-aware sidebar and page finder contain only permitted existing tools. Mobile uses Overview / Live / Reports bottom navigation plus a keyboard-accessible drawer. Website Light / Dark / System preferences use a first-party cookie; no application files or records are stored in localStorage.
 
 The member Overview refreshes SQL-derived enabled server availability/player counts, recent active units, upcoming training/events, own applications and current patrol every 15 seconds while visible. Staff review counts are queried only for existing reviewer roles. Table columns exclude FiveM licenses/API credentials. Empty states reflect actual data; no calls/maps/dispatch records are invented. The new Overview requires sign-in on both the initial and update routes.
 
-The redesign preserves the existing account, applications, reports, personnel, department, training, document, admin/FiveM and private chat actions. The tablet uses quick actions and bottom tabs with current-page indicators, labeled report/link/chat inputs and real account-link status. Its existing callbacks and role-checked chat remain intact. This release covers existing features; new dispatch/CAD workflows, a mini HUD and appearance administration remain later phases. No additional SQL migration is needed for UI v2. Restart the website and communityhub resource after installing.
+The redesign preserves the existing account, applications, reports, personnel, department, training, document, admin/FiveM and private chat actions. The tablet uses quick actions and bottom tabs with current-page indicators, labeled report/link/chat inputs and real account-link status. Its existing callbacks and role-checked chat remain intact. Dispatch/CAD workflows, real coordinate maps, panic alerts, the mini duty HUD, tablet applications and appearance administration are included with migration 010. Restart the website and communityhub resource after installing.
 
 ### All file types and document removal (migration 009)
 
 Apply sql/migrations/009_document_removal.sql after 008 and restart the website. Department command/staff/admin/management/owner uploads retain their existing permissions. All MIME types and extensions are accepted; MAX_UPLOAD_MB and MySQL max_allowed_packet limits still apply. Files remain SQL-backed, signed-in downloads are sent as attachments, and content sniffing is disabled.
 
 Admin, management and owner accounts can remove a document from the library and restore it from Removed documents. Removal records the administrator and timestamp, hides the document from lists and rejects its download URL for every role. SQL bytes/checksums and legacy originals are retained for restoration; no filesystem deletion or permanent purge is performed. Both mutation routes enforce admin roles independently of the UI.
+
+### Branding, tablet applications and dispatch/CAD (migration 010)
+
+See [tablet operations setup](docs/tablet-operations.md) for permissions, feature switches, sampling/refresh intervals, HUD/panic controls and validation. Admin → Appearance & tablet manages SQL-backed logo and in-game applications. The existing owner settings continue to set the community name. Apply 010_tablet_operations.sql and restart the website/resource. Existing API request limits remain in place, with an additional per-player resource-side feature budget.
