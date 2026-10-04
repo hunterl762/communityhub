@@ -1,9 +1,8 @@
 const axios=require('axios');
-async function isGuildMember(discordId){
-  if(!process.env.DISCORD_GUILD_ID||!process.env.DISCORD_BOT_TOKEN)throw new Error('DISCORD_GUILD_ID and DISCORD_BOT_TOKEN are required for guild membership checks.');
-  try{
-    await axios.get(`https://discord.com/api/v10/guilds/${process.env.DISCORD_GUILD_ID}/members/${discordId}`,{headers:{Authorization:`Bot ${process.env.DISCORD_BOT_TOKEN}`}});
-    return true;
-  }catch(e){if(e.response&&e.response.status===404)return false;throw e;}
-}
-module.exports={isGuildMember};
+function config(){if(!process.env.DISCORD_GUILD_ID||!process.env.DISCORD_BOT_TOKEN)throw new Error('DISCORD_GUILD_ID and DISCORD_BOT_TOKEN are required.');return{guild:process.env.DISCORD_GUILD_ID,headers:{Authorization:`Bot ${process.env.DISCORD_BOT_TOKEN}`}};}
+async function isGuildMember(discordId){const c=config();try{await axios.get(`https://discord.com/api/v10/guilds/${c.guild}/members/${discordId}`,{headers:c.headers});return true;}catch(e){if(e.response?.status===404)return false;throw e;}}
+async function getGuildMember(discordId){const c=config();const {data}=await axios.get(`https://discord.com/api/v10/guilds/${c.guild}/members/${discordId}`,{headers:c.headers});return data;}
+async function addGuildRole(discordId,roleId){if(!roleId)return;const c=config();await axios.put(`https://discord.com/api/v10/guilds/${c.guild}/members/${discordId}/roles/${roleId}`,null,{headers:c.headers});}
+async function removeGuildRole(discordId,roleId){if(!roleId)return;const c=config();await axios.delete(`https://discord.com/api/v10/guilds/${c.guild}/members/${discordId}/roles/${roleId}`,{headers:c.headers});}
+async function syncCommunityRoles(user,department,rank,allMappedRoleIds=[]){if(!user?.discord_id)return;const desired=new Set();if(department?.discord_role_id)desired.add(department.discord_role_id);if(user.role==='recruit'&&department?.recruit_discord_role_id)desired.add(department.recruit_discord_role_id);if(['member','reviewer','department_command','staff','admin','management','owner'].includes(user.role)&&department?.member_discord_role_id)desired.add(department.member_discord_role_id);if(rank?.discord_role_id)desired.add(rank.discord_role_id);const member=await getGuildMember(user.discord_id);const current=new Set(member.roles||[]);for(const roleId of desired)if(!current.has(roleId))await addGuildRole(user.discord_id,roleId);for(const roleId of allMappedRoleIds)if(current.has(roleId)&&!desired.has(roleId))await removeGuildRole(user.discord_id,roleId);return [...desired];}
+module.exports={isGuildMember,getGuildMember,addGuildRole,removeGuildRole,syncCommunityRoles};
