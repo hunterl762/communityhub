@@ -39,7 +39,7 @@ const server=app.listen(0,'127.0.0.1');
   serverMissing=false;
   schemaFailure=true;
   response=await get('/api/fivem/status/primary');assert.equal(response.status,503);
-  const body=await response.json();assert.match(body.error,/migrations 005 and 006/);assert(!JSON.stringify(body).includes('sensitive SQL'));
+  const body=await response.json();assert.match(body.error,/migrations 005, 006 and 007/);assert(!JSON.stringify(body).includes('sensitive SQL'));
   response=await fetch(base+'/');assert.equal(response.status,429);assert.equal(siteRequests,1);
   const manifest=require('fs').readFileSync(path.join(root,'fivem/communityhub/fxmanifest.lua'),'utf8');
   assert(!manifest.includes('shared_script'));assert(manifest.includes("server_scripts {'config.lua','server/http.lua','server/main.lua'}"));

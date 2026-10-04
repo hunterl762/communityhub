@@ -10,7 +10,7 @@
 <% [['/applications','Applications'],['/calendar','Calendar'],['/documents','Documents'],['/personnel','Personnel roster']].forEach(([url,label])=>{ %><a href="<%= url %>" <%- active(url)?'aria-current="page"':'' %>><%= label %></a><% }) %>
 </div></details>
 <details class="nav-menu"><summary>Operations</summary><div class="nav-menu-links">
-<% [['/fivem','FiveM & patrol'],['/training','Training'],['/reports','Submit & view reports']].forEach(([url,label])=>{ %><a href="<%= url %>" <%- active(url)?'aria-current="page"':'' %>><%= label %></a><% }) %>
+<% [['/fivem','FiveM & patrol'],['/fivem/status','Server status'],['/training','Training'],['/reports','Submit & view reports']].forEach(([url,label])=>{ %><a href="<%= url %>" <%- active(url)?'aria-current="page"':'' %>><%= label %></a><% }) %>
 </div></details>
 <% if(review){ %><details class="nav-menu"><summary>Staff</summary><div class="nav-menu-links">
 <a href="/admin" <%- here==='/admin'?'aria-current="page"':'' %>>Admin dashboard</a>

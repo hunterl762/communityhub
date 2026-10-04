@@ -12,3 +12,10 @@ RegisterNetEvent('communityhub:tabletData',function(data) if data.ok then SendNU
 RegisterNetEvent('communityhub:linkResult',function(data) SendNUIMessage({type='notice',data=data});if not open then TriggerEvent('chat:addMessage',{args={'Community Hub',data.ok and 'Account linked successfully.' or data.error or 'Link request failed'}}) end;if data.ok then TriggerServerEvent('communityhub:getProfile') end end)
 RegisterNetEvent('communityhub:patrolResult',function(data) SendNUIMessage({type='notice',data=data}) end)
 RegisterNetEvent('communityhub:reportResult',function(data) SendNUIMessage({type='reportResult',data=data}) end)
+-- Refresh while the tablet is open; no requests are sent while it is closed.
+CreateThread(function()
+    while true do
+        Wait(30000)
+        if open then TriggerServerEvent('communityhub:getProfile') end
+    end
+end)

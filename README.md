@@ -51,3 +51,23 @@ Run communityhub_test in the FiveM server console to check API reachability, aut
 The manifest now loads config.lua only on the server. Tablet command/key settings live in client/config.lua. If you used a real API key with the old shared-script manifest, revoke that key in Admin > FiveM and generate a replacement, since game clients could download the old config.
 
 Regression checks: `node tests/fivem-api.cjs` and `lua tests/fivem-http.lua` (a standalone Lua runtime).
+
+
+### Database files and live FiveM status (migration 007)
+
+Import sql/migrations/007_database_files_status.sql after 006 before restarting the website. New document uploads use in-memory multipart handling and store the bytes plus a SHA-256 checksum in document_contents. Metadata remains in documents. Downloads preserve existing sign-in requirements; upload permissions remain department command/staff/admin/management/owner. No new uploaded files are written to local disk.
+
+Set MySQL max_allowed_packet larger than MAX_UPLOAD_MB plus overhead (64 MB is suitable for the default 25 MB upload limit). The upload handler rejects files exceeding the current database packet limit without inserting orphan metadata. Include document_contents in your database backups.
+
+Import existing files from the website folder:
+
+```sh
+node scripts/import-document-files.cjs
+node scripts/import-document-files.cjs --apply
+```
+
+The default is a dry run. The importer is idempotent, checks paths/file sizes/packet limits, skips missing files with a document ID, and never deletes originals. Legacy downloads remain available until imported.
+
+Members can use FiveM > Server status to view availability, player counts, observed 30-day uptime percentages, online/offline duration totals and the latest 100 availability periods. First observation starts history; earlier uptime is not fabricated. The website checks every 15 seconds and records outages from the 90-second heartbeat expiry; heartbeat writes and status transitions are serialized per server in SQL. If monitoring restarts after a gap, a stale last heartbeat bounds the outage until the next heartbeat. Heartbeat availability measures the integration reporting in, not a game-client connection test.
+
+Admin review counts and FiveM status/patrol totals refresh from SQL every 15 seconds while their page is visible, leaving editing forms intact. The member status page refreshes every 15 seconds. The tablet refreshes profile and operations data every 30 seconds while open; background FiveM heartbeats continue at Config.HeartbeatSeconds. Restart the installed resource after updating client/main.lua.
