@@ -1,0 +1,8 @@
+const router=require('express').Router(),db=require('../db'),crypto=require('crypto');
+const hash=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
+const xml=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
+async function icon(req,res){try{const [[logo]]=await db.query('SELECT file_data,mime_type,sha256 FROM community_branding WHERE id=1');let bytes,mime;
+if(logo?.file_data&&['image/png','image/jpeg','image/webp'].includes(logo.mime_type)){bytes=logo.file_data;mime=logo.mime_type;}else{const [[setting]]=await db.query("SELECT setting_value FROM site_settings WHERE setting_key='community_name'");const name=setting?.setting_value||process.env.COMMUNITY_NAME||'Community Hub',initials=name.trim().split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase()||'CH';bytes=Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="#14283e"/><text x="32" y="34" dominant-baseline="middle" text-anchor="middle" fill="#eef2f7" font-family="Arial,sans-serif" font-size="25" font-weight="700">'+xml(initials)+'</text></svg>');mime='image/svg+xml';}
+const etag='"'+hash(bytes)+'"';res.set({'Content-Type':mime,'X-Content-Type-Options':'nosniff','Cache-Control':'public, max-age=0, must-revalidate','ETag':etag});if(req.get('If-None-Match')?.split(/\s*,\s*/).some(value=>value===etag||value==='W/'+etag||value==='*'))return res.status(304).end();res.send(bytes);
+}catch(e){console.error('[Community branding icon]',e.code||'Unavailable');res.status(503).json({ok:false,error:'Community icon temporarily unavailable.'});}}
+router.get('/branding/icon',icon);router.get('/favicon.ico',icon);module.exports=router;
