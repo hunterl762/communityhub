@@ -27,6 +27,7 @@ app.use('/reports',require('./src/routes/reports'));
 app.use('/calendar',require('./src/routes/calendar'));
 app.use('/training',require('./src/routes/training'));
 app.use('/documents',require('./src/routes/documents'));
+app.use('/personnel',require('./src/routes/personnel'));
 app.use('/admin',require('./src/routes/admin'));
 app.get('/health',async(req,res)=>{try{await pool.query('SELECT 1');res.json({ok:true,database:true});}catch(e){res.status(503).json({ok:false,database:false});}});
 app.use((req,res)=>res.status(404).render('message',{title:'Page not found',message:'The page you requested could not be found.'}));
