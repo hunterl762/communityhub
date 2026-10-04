@@ -7,6 +7,6 @@ Config.ServerName = 'Community Roleplay'
 Config.MaxPlayers = 64
 -- Choose 'standalone' for vMenu/other servers or 'qbcore' for QB-Core servers.
 Config.Framework = 'standalone'
-Config.TabletCommand = 'hub'
-Config.TabletKey = 'F6'
+-- Tablet command/key are configured in client/config.lua.
+
 Config.HeartbeatSeconds = 30

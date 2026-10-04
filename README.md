@@ -38,3 +38,16 @@ node tests/navigation.cjs
 ```
 
 These checks use sample data and do not connect to MySQL or a FiveM server.
+
+
+### Troubleshooting FiveM requests
+
+After updating the website and resource, restart both. Set Config.ApiBase in fivem/communityhub/config.lua to the reachable website URL ending in /api/fivem. 127.0.0.1 works only when FiveM and the website run on the same machine (and network namespace). Use the final HTTPS URL rather than a redirect. Set Config.ApiKey to an active generated credential and Config.ServerKey to the key shown in Admin > FiveM Configuration.
+
+Run communityhub_test in the FiveM server console to check API reachability, authentication and server configuration. Failures now show actionable HTTP errors in the console and tablet instead of a generic Request failed. Database/schema failures return JSON with migration guidance. The API is mounted before website sessions and rate limiting; authenticated telemetry has a separate 10,000-request/15-minute budget per IP, while failed requests retain a 500-request budget.
+
+/link takes the six-digit code generated on the website FiveM page, not a player/account ID. Codes expire after five minutes. Command results also appear in chat when the tablet is closed.
+
+The manifest now loads config.lua only on the server. Tablet command/key settings live in client/config.lua. If you used a real API key with the old shared-script manifest, revoke that key in Admin > FiveM and generate a replacement, since game clients could download the old config.
+
+Regression checks: `node tests/fivem-api.cjs` and `lua tests/fivem-http.lua` (a standalone Lua runtime).

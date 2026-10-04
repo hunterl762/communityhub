@@ -1,0 +1,23 @@
+const assert=require('node:assert/strict');
+const fs=require('fs');
+const vm=require('vm');
+const nodes=new Map();
+const node=id=>{if(!nodes.has(id))nodes.set(id,{value:'',textContent:'',style:{},classList:{add(){},remove(){},toggle(){}}});return nodes.get(id);};
+let onMessage,request,fail=false;
+const context=vm.createContext({document:{getElementById:node,querySelectorAll:()=>[],addEventListener(){},createElement:()=>({textContent:'',innerHTML:''})},window:{addEventListener:(_,handler)=>onMessage=handler},setInterval(){},setTimeout(){},Date,JSON,GetParentResourceName:()=> 'communityhub',fetch:async(url,options)=>{request={url,body:JSON.parse(options.body)};if(fail)throw new Error('network');return {ok:true};}});
+vm.runInContext(fs.readFileSync(require('path').join(__dirname,'../fivem/communityhub/html/app.js'),'utf8'),context);
+(async()=>{
+  node('reportSubject').value='Keep this subject';node('reportDetails').value='Keep these details';
+  node('submitReport').onclick();await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(request.url,'https://communityhub/report');assert.equal(request.body.subject,'Keep this subject');
+  assert.equal(node('reportSubject').value,'Keep this subject','callback acknowledgement cleared unsaved report');
+  onMessage({data:{type:'reportResult',data:{ok:false,error:'Website unavailable'}}});
+  assert.equal(node('reportDetails').value,'Keep these details');assert.equal(node('notice').textContent,'Website unavailable');
+  onMessage({data:{type:'reportResult',data:{ok:true}}});
+  assert.equal(node('reportSubject').value,'');assert.equal(node('reportDetails').value,'');
+  onMessage({data:{type:'profile',data:{ok:false,error:'Authentication rejected'}}});
+  assert.equal(node('status').textContent,'Authentication rejected');
+  fail=true;await vm.runInContext("send('link',{code:'123456'})",context);
+  assert.match(node('notice').textContent,/Cannot contact/);
+  console.log('Passed: NUI callback failures, profile errors and report retention until confirmed API success.');
+})().catch(error=>{console.error(error);process.exitCode=1;});
