@@ -31,3 +31,11 @@ Panic creates a priority P1 call using the requesting player's server-derived po
 Run the existing tests/*.cjs regression scripts and tests/fivem-http.lua. For SQL integration, run node tests/tablet-operations-integration.cjs <checkout> <installation-root>. This applies migration 010 and uses temporary fixture rows, restoring feature/logo settings and removing fixture data on completion. Discord membership is stubbed only inside that test; production uses Discord's membership endpoint. Run SQL integration in an isolated test database when other users are active.
 
 The UI was verified with synthetic desktop/mobile browser previews. Final GTA waypoint, server coordinate sampling and keyboard behavior require an in-game check after restart communityhub.
+
+## Postal map and report submissions (migration 011)
+
+Apply 011_postals_reports.sql and restart the website/resource. The bundled 1,687-point new-postals.json dataset comes from [DevBlocky/nearest-postal](https://github.com/DevBlocky/nearest-postal); its MIT license is retained under third-party/nearest-postal. No additional postal resource is needed. The website and tablet use the same dataset. The interactive coordinate map supports postal search, zoom, drag-to-pan, and verified in-game routing. Postal numbers appear on zoomed views and unit/call details; the map does not contain street-image tiles.
+
+The client calculates its nearest postal every two seconds for the tablet and HUD. The API derives unit and call postals from server-sampled GPS. In-game report submissions and panic requests capture server-owned coordinates, with unavailable GPS left empty. Entering a postal on a new dispatch call resolves its coordinates; arbitrary supplied postal labels cannot overwrite calculated values.
+
+The tablet separates Submit report from the admin/management/owner-only Report submissions tab. Report read/update actions check current SQL role/activity and server scope, independently of dispatch/CAD switches. Report review has been removed from the tablet Dispatch/CAD section; the existing website review section remains available. Reports are cleared on tablet close, account changes, access loss and failed reads.

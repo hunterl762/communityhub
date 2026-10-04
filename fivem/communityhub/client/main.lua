@@ -45,3 +45,6 @@ RegisterCommand(Config.PanicCommand or 'hubpanic',function() SendNUIMessage({typ
 RegisterKeyMapping(Config.HudCommand or 'hubhud','Toggle Community Hub duty HUD','keyboard',Config.HudKey or 'F7')
 RegisterKeyMapping(Config.PanicCommand or 'hubpanic','Community Hub panic alert','keyboard',Config.PanicKey or 'F9')
 CreateThread(function() Wait(2000);SendNUIMessage({type='hud',enabled=hudEnabled});SendNUIMessage({type='appearance',theme=theme});TriggerServerEvent('communityhub:getProfile') end)
+
+-- Local nearest postal display; report/panic records use server-derived coordinates.
+CreateThread(function() while true do Wait(2000);local coords=GetEntityCoords(PlayerPedId());SendNUIMessage({type='postal',code=CommunityHubPostals.nearest(coords.x,coords.y)}) end end)
