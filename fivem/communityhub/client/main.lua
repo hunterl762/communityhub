@@ -10,7 +10,7 @@ RegisterNUICallback('report',function(data,cb) TriggerServerEvent('communityhub:
 RegisterNetEvent('communityhub:profile',function(data) SendNUIMessage({type='profile',data=data});if not data.ok then SendNUIMessage({type='notice',data=data}) end end)
 RegisterNetEvent('communityhub:tabletData',function(data) if data.ok then SendNUIMessage({type='tabletData',data=data}) else SendNUIMessage({type='notice',data=data}) end end)
 RegisterNetEvent('communityhub:linkResult',function(data) SendNUIMessage({type='notice',data=data});if not open then TriggerEvent('chat:addMessage',{args={'Community Hub',data.ok and 'Account linked successfully.' or data.error or 'Link request failed'}}) end;if data.ok then TriggerServerEvent('communityhub:getProfile') end end)
-RegisterNetEvent('communityhub:patrolResult',function(data) SendNUIMessage({type='notice',data=data}) end)
+RegisterNetEvent('communityhub:patrolResult',function(data) SendNUIMessage({type='notice',data=data});if data.ok then TriggerServerEvent('communityhub:getProfile') end end)
 RegisterNetEvent('communityhub:reportResult',function(data) SendNUIMessage({type='reportResult',data=data}) end)
 -- Refresh while the tablet is open; no requests are sent while it is closed.
 CreateThread(function()
@@ -19,3 +19,10 @@ CreateThread(function()
         if open then TriggerServerEvent('communityhub:getProfile') end
     end
 end)
+
+RegisterNetEvent('communityhub:sampleClock',function(token) TriggerServerEvent('communityhub:clockSample',token,GetClockHours(),GetClockMinutes()) end)
+RegisterNetEvent('communityhub:clockHistory',function(data) SendNUIMessage({type='clockHistory',data=data}) end)
+RegisterNetEvent('communityhub:chatData',function(data) SendNUIMessage({type='chatData',data=data}) end)
+RegisterNUICallback('chatRead',function(_,cb) TriggerServerEvent('communityhub:adminChat');cb({ok=true}) end)
+RegisterNUICallback('chatSend',function(data,cb) TriggerServerEvent('communityhub:adminChat',data.message);cb({ok=true}) end)
+CreateThread(function() while true do Wait(1000);if open then SendNUIMessage({type='gameClock',hours=GetClockHours(),minutes=GetClockMinutes()}) end end end)

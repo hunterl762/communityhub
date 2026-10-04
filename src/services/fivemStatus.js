@@ -72,7 +72,7 @@ function startMonitor() {
 }
 
 async function snapshot() {
-  const [servers] = await db.query(`SELECT s.id,s.name,s.server_key,s.max_players,s.last_heartbeat_at,
+  const [servers] = await db.query(`SELECT s.id,s.name,s.server_key,s.max_players,s.last_heartbeat_at,s.game_hours,s.game_minutes,s.game_clock_at,
     IF(s.last_heartbeat_at>DATE_SUB(NOW(),INTERVAL 90 SECOND),1,0) live,
     IF(s.last_heartbeat_at>DATE_SUB(NOW(),INTERVAL 90 SECOND),s.current_players,0) current_players,
     p.state recorded_state,p.started_at state_since,

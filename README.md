@@ -71,3 +71,12 @@ The default is a dry run. The importer is idempotent, checks paths/file sizes/pa
 Members can use FiveM > Server status to view availability, player counts, observed 30-day uptime percentages, online/offline duration totals and the latest 100 availability periods. First observation starts history; earlier uptime is not fabricated. The website checks every 15 seconds and records outages from the 90-second heartbeat expiry; heartbeat writes and status transitions are serialized per server in SQL. If monitoring restarts after a gap, a stale last heartbeat bounds the outage until the next heartbeat. Heartbeat availability measures the integration reporting in, not a game-client connection test.
 
 Admin review counts and FiveM status/patrol totals refresh from SQL every 15 seconds while their page is visible, leaving editing forms intact. The member status page refreshes every 15 seconds. The tablet refreshes profile and operations data every 30 seconds while open; background FiveM heartbeats continue at Config.HeartbeatSeconds. Restart the installed resource after updating client/main.lua.
+
+
+### Patrol time clock, game time and private admin chat (migration 008)
+
+Apply 008_time_clock_chat.sql after 007 and restart the website/resource. /fivem has web clock-in/out and a member's own recent patrol sessions. The admin dashboard shows the latest 100 sessions and a clock event audit with web/game source; these refresh every 15 seconds. Web and game actions lock the same user row, preventing concurrent double clock-ins. Historical sessions remain visible; source events start with this update.
+
+The tablet shows GTA game time from client clock natives. The server requests one connected player's sample each heartbeat and accepts only that requested player's response. Member status cards show the sampled game time, not a guessed progression, and mark stale/empty-server samples unavailable after 90 seconds. Game time is display telemetry, never the basis for logged patrol durations. SQL real time drives the time clock.
+
+Admin Chat is a server-specific, SQL-backed tablet channel for linked admin, management and owner accounts. Every read/send checks the current SQL role using the license derived server-side from the player source. Normal members, reviewers, command and staff cannot read/send. No chat is included in general tablet data or broadcast to all players. Messages are limited to 1,000 characters, ten sends per 30 seconds per user, and the latest 100 messages are polled every five seconds while open.
