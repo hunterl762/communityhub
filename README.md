@@ -22,3 +22,19 @@ Node.js + Express + EJS + MySQL/MariaDB community management portal for FiveM ro
 5. Open `http://localhost:3020`.
 
 Never commit `.env` or uploaded private documents.
+
+### Admin workspace and shared navigation
+
+The Admin dashboard now groups workspace tools separately from application and report review queues. FiveM configuration is available from the dashboard, the Administration navigation, and the shared Staff menu for admin, management and owner roles. Reviewers retain review access; department command and staff retain community management access. Members & Roles remains limited to admin and owner, and Community Settings to owner.
+
+The shared navigation groups Community, Operations, Staff and Account links, uses keyboard-accessible disclosure menus, closes on Escape or outside clicks, and expands inline on mobile. Guests see Home and Discord login.
+
+FiveM Configuration shows saved server settings, server keys, recent heartbeat information, credential creation and last-use dates, revocation status, MDT announcements and resource setup instructions. Web settings do not modify config.lua or schedule restarts. Heartbeats refresh hostname and player capacity. The existing enabled flag is configuration metadata, not an API-access switch.
+
+Run the role-aware navigation, authorization, template and FiveM rendering checks with:
+
+```sh
+node tests/navigation.cjs
+```
+
+These checks use sample data and do not connect to MySQL or a FiveM server.

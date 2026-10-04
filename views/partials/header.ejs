@@ -1,1 +1,24 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title><%= communityName %></title><link rel="stylesheet" href="/css/site.css"></head><body><header><a class="brand" href="/"><%= communityName.toUpperCase() %></a><nav><% if(user){ %><a href="/applications">Applications</a><a href="/reports">Reports</a><a href="/calendar">Calendar</a><a href="/training">Training</a><a href="/personnel">Roster</a><a href="/fivem">FiveM</a><a href="/documents">Documents</a><% if(['reviewer','department_command','staff','admin','management','owner'].includes(user.role)){ %><a href="/admin">Admin</a><a href="/admin/management/notifications">Notifications<% if(unreadNotifications>0){ %> (<%= unreadNotifications %>)<% } %></a><% } %><a href="/account">Account</a><form class="nav-form" method="post" action="/auth/logout"><button class="nav-link-button" type="submit">Logout</button></form><% }else{ %><a class="login-link" href="/auth/login">Login with Discord</a><% } %></nav></header><main>
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title><%= communityName %></title><link rel="stylesheet" href="/css/site.css"><script src="/js/navigation.js" defer></script></head><body>
+<% const role = user?.role; const review = ['reviewer','department_command','staff','admin','management','owner'].includes(role); const manage = ['department_command','staff','admin','management','owner'].includes(role); const configure = ['admin','management','owner'].includes(role); const members = ['admin','owner'].includes(role); const here = typeof currentPath === 'string' ? currentPath : ''; const active = p => here === p || (p !== '/' && here.startsWith(p+'/')); %>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="site-header"><a class="brand" href="/"><%= communityName %></a>
+<nav class="site-nav" aria-label="Main navigation">
+<a href="/" <%- here === '/' ? 'aria-current="page"' : '' %>>Home</a>
+<% if(user){ %>
+<details class="nav-menu"><summary>Community</summary><div class="nav-menu-links">
+<% [['/applications','Applications'],['/calendar','Calendar'],['/documents','Documents'],['/personnel','Personnel roster']].forEach(([url,label])=>{ %><a href="<%= url %>" <%- active(url)?'aria-current="page"':'' %>><%= label %></a><% }) %>
+</div></details>
+<details class="nav-menu"><summary>Operations</summary><div class="nav-menu-links">
+<% [['/fivem','FiveM & patrol'],['/training','Training'],['/reports','Submit & view reports']].forEach(([url,label])=>{ %><a href="<%= url %>" <%- active(url)?'aria-current="page"':'' %>><%= label %></a><% }) %>
+</div></details>
+<% if(review){ %><details class="nav-menu"><summary>Staff</summary><div class="nav-menu-links">
+<a href="/admin" <%- here==='/admin'?'aria-current="page"':'' %>>Admin dashboard</a>
+<% if(manage){ %><a href="/admin/management">Community management</a><a href="/admin/management/notifications">Notifications <span class="nav-count"><%= unreadNotifications %> unread</span></a><% } %>
+<% if(configure){ %><a href="/admin/fivem">FiveM configuration</a><a href="/admin/application-builder">Application builder</a><% } %>
+<% if(members){ %><a href="/admin/users">Members & roles</a><% } %>
+<% if(role==='owner'){ %><a href="/admin#community-settings">Community settings</a><% } %>
+</div></details><% } %>
+<details class="nav-menu account-menu"><summary>Account</summary><div class="nav-menu-links"><span class="nav-identity"><%= user.display_name||user.discord_username||'Your account' %><small><%= (role||'member').replaceAll('_',' ') %></small></span><a href="/account" <%- active('/account')?'aria-current="page"':'' %>>Account settings</a><form class="nav-form" method="post" action="/auth/logout"><button class="nav-link-button" type="submit">Log out</button></form></div></details>
+<% }else{ %><a class="login-link" href="/auth/login">Login with Discord</a><% } %>
+</nav></header><main id="main-content" tabindex="-1">
