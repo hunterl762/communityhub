@@ -29,7 +29,7 @@ The Admin dashboard now groups workspace tools separately from application and r
 
 The shared navigation groups Community, Operations, Staff and Account links, uses keyboard-accessible disclosure menus, closes on Escape or outside clicks, and expands inline on mobile. Guests see Home and Discord login.
 
-FiveM Configuration shows saved server settings, server keys, recent heartbeat information, credential creation and last-use dates, revocation status, MDT announcements and resource setup instructions. Web settings do not modify config.lua or schedule restarts. Heartbeats refresh hostname and player capacity. The existing enabled flag is configuration metadata, not an API-access switch.
+FiveM Configuration shows saved server settings, server keys, recent heartbeat information, credential creation and last-use dates, revocation status, tablet announcements and resource setup instructions. Web settings do not modify config.lua or schedule restarts. Heartbeats refresh hostname and player capacity. The existing enabled flag is configuration metadata, not an API-access switch.
 
 Run the role-aware navigation, authorization, template and FiveM rendering checks with:
 
@@ -97,4 +97,4 @@ Admin, management and owner accounts can remove a document from the library and 
 
 ### Branding, tablet applications and dispatch/CAD (migration 010)
 
-See [tablet operations setup](docs/tablet-operations.md) for permissions, feature switches, sampling/refresh intervals, HUD/panic controls and validation. Admin → Appearance & tablet manages SQL-backed logo and in-game applications. The existing owner settings continue to set the community name. Apply 010_tablet_operations.sql and restart the website/resource. Existing API request limits remain in place, with an additional per-player resource-side feature budget.
+See [tablet setup](docs/tablet-operations.md) for permissions, application switches, duty HUD and validation. Admin → Appearance & tablet manages SQL-backed logo and in-game applications. Apply migrations through 013_remove_cad_mdt.sql and restart the website/resource. CAD/MDT, dispatch calls, BOLOs, panic and waypoint routing have been removed. Historical SQL records remain stored. Existing API limits and the per-player feature budget remain.

@@ -34,17 +34,14 @@ RegisterNUICallback('feature',function(data,cb)
     TriggerServerEvent('communityhub:feature',data.kind,data.request_id,data.data or {});cb({ok=true})
 end)
 RegisterNetEvent('communityhub:featureReply',function(requestId,data)
-    if data.ok and data.waypoint and type(data.waypoint.x)=='number' and type(data.waypoint.y)=='number' then SetNewWaypoint(data.waypoint.x,data.waypoint.y) end
     SendNUIMessage({type='featureReply',request_id=requestId,data=data})
 end)
 local function toggleHud() hudEnabled=not hudEnabled;SetResourceKvp('communityhub:hud',hudEnabled and 'on' or 'off');SendNUIMessage({type='hud',enabled=hudEnabled}) end
 RegisterCommand(Config.HudCommand or 'hubhud',toggleHud,false)
 RegisterNUICallback('hudToggle',function(_,cb) toggleHud();cb({ok=true}) end)
 RegisterNUICallback('appearance',function(data,cb) if data.theme=='light' or data.theme=='dark' then theme=data.theme;SetResourceKvp('communityhub:theme',theme) end;cb({ok=true}) end)
-RegisterCommand(Config.PanicCommand or 'hubpanic',function() SendNUIMessage({type='panic'}) end,false)
 RegisterKeyMapping(Config.HudCommand or 'hubhud','Toggle Community Hub duty HUD','keyboard',Config.HudKey or 'F7')
-RegisterKeyMapping(Config.PanicCommand or 'hubpanic','Community Hub panic alert','keyboard',Config.PanicKey or 'F9')
 CreateThread(function() Wait(2000);SendNUIMessage({type='hud',enabled=hudEnabled});SendNUIMessage({type='appearance',theme=theme});TriggerServerEvent('communityhub:getProfile') end)
 
--- Local nearest postal display; report/panic records use server-derived coordinates.
+-- Local nearest postal display; report records use server-derived coordinates.
 CreateThread(function() while true do Wait(2000);local coords=GetEntityCoords(PlayerPedId());SendNUIMessage({type='postal',code=CommunityHubPostals.nearest(coords.x,coords.y)}) end end)

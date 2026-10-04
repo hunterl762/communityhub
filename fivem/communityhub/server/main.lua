@@ -55,23 +55,18 @@ RegisterNetEvent('communityhub:adminChat',function(message)
 end)
 
 -- Server-owned player identity and coordinates; clients cannot choose a license or server.
-local function positionFor(src)
-    local ok,coords=pcall(function() local ped=GetPlayerPed(src);if not ped or ped==0 then return nil end;return GetEntityCoords(ped) end)
-    if ok and coords then return coords.x,coords.y,coords.z end
-end
 local featureBudget={}
 AddEventHandler('playerDropped',function() featureBudget[source]=nil end)
 RegisterNetEvent('communityhub:feature',function(kind,requestId,data)
     local src=source;local lic=licenseFor(src)
     if not lic or type(requestId)~='string' or #requestId<16 or #requestId>64 or not requestId:match('^[%w_-]+$') or type(data)~='table' then return end
-    local routes={opsState='/operations/state',opsAction='/operations/action',opsSearch='/operations/search',appCatalog='/applications/catalog',appForm='/applications/form',appSubmit='/applications/submit',reportsRead='/reports/read'}
+    local routes={appCatalog='/applications/catalog',appForm='/applications/form',appSubmit='/applications/submit',reportsRead='/reports/read',reportsAction='/reports/update'}
     if not routes[kind] then return end
     local now=GetGameTimer();local budget=featureBudget[src]
     if not budget or now-budget.start>=60000 then budget={start=now,count=0};featureBudget[src]=budget end
     budget.count=budget.count+1
     if budget.count>60 then return TriggerClientEvent('communityhub:featureReply',src,requestId,{ok=false,error='Too many requests. Please wait a minute.'}) end
     data.license=lic;data.server_key=Config.ServerKey
-    if kind=='opsAction' and data.action=='panic' then data.position_x,data.position_y,data.position_z=positionFor(src);data.title=nil;data.location='Officer panic';data.description='Requested from in-game integration.' end
     request('POST',routes[kind],data,function(_,body)
         if licenseFor(src)~=lic then return end
         TriggerClientEvent('communityhub:featureReply',src,requestId,body)

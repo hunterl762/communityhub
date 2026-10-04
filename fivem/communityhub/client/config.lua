@@ -6,5 +6,3 @@ Config.TabletKey = 'F6'
 -- Optional HUD and emergency shortcuts. These contain no API credentials.
 Config.HudCommand = 'hubhud'
 Config.HudKey = 'F7'
-Config.PanicCommand = 'hubpanic'
-Config.PanicKey = 'F9'
