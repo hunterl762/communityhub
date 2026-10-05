@@ -8,7 +8,7 @@
 **FiveM Community Hub** is a premium all-in-one ecosystem connecting your **website, FiveM server, staff, departments, and community** through one centralized platform.
 
 ━━━━━━━━━━━━━━━━━━━━━━
-## 💎 WHAT IS FIVEM COMMUNITY HUB?
+## 💎 MORE THAN ANOTHER DASHBOARD
 ━━━━━━━━━━━━━━━━━━━━━━
 
 ### **This isn't another CAD/MDT.**
@@ -17,9 +17,9 @@
 ❌ No CAD pretending to be community management  
 ❌ No disconnected collection of admin tools  
 
-✅ **This is Community Management — built for FiveM.**
+✅ **Community Management — built around FiveM.**
 
-Your community gets a modern **web dashboard** connected directly to your FiveM server.
+Get a modern web dashboard connected directly to your FiveM server.
 
 > 🌐 **WEBSITE** 🤝 🎮 **FIVEM** 🤝 👥 **COMMUNITY**
 
@@ -28,16 +28,13 @@ Your community gets a modern **web dashboard** connected directly to your FiveM 
 ━━━━━━━━━━━━━━━━━━━━━━
 
 ### 🎮 **LIVE FIVEM INTEGRATION**
-⚡ Live server status  
-⚡ Player activity  
-⚡ Join/leave tracking  
-⚡ Uptime monitoring  
-⚡ Live server information  
-⚡ API synchronization  
+⚡ Live server status & information  
+⚡ Player activity & join/leave tracking  
+⚡ Server uptime monitoring  
+⚡ Real-time API synchronization  
 
 ### 👥 **COMMUNITY MANAGEMENT**
-🛡️ Staff management  
-👥 Member management  
+🛡️ Staff & member management  
 🏢 Departments & groups  
 🔐 Roles & permissions  
 📊 Community statistics  
@@ -48,30 +45,26 @@ Your community gets a modern **web dashboard** connected directly to your FiveM 
 📥 Application submissions  
 🔎 Staff review workflows  
 ✅ Accept / deny management  
-👥 Recruitment organization  
 
 ### 🎓 **TRAINING & EVENTS**
-📅 Training calendar  
-🎓 Training management  
+📅 Training calendar & management  
 👥 Attendance tracking  
 📆 Community events  
 📢 Event announcements  
 
 ### 📊 **ACTIVITY & PATROL TRACKING**
-📈 Player activity  
-🎮 Session information  
+📈 Player activity & session history  
 🚓 Patrol statistics  
 📊 Community engagement  
-🕐 Activity history  
 
-### 📢 **COMMUNITY ANNOUNCEMENTS**
-Create and manage announcements from your Community Hub and keep everyone informed.
+### 📢 **ANNOUNCEMENTS**
+Create and manage community announcements from one centralized platform.
 
 ### 🎮 **MODERN IN-GAME HUB**
-Access important Community Hub features **directly inside FiveM** through a purpose-built interface.
+Give staff and members access to important Community Hub features **directly inside FiveM**.
 
-### 🖥️ **POWERFUL WEB ADMINISTRATION**
-Manage your installation through a responsive dashboard built for **desktop + mobile**.
+### 🖥️ **WEB ADMINISTRATION**
+Manage your installation through a responsive dashboard designed for **desktop + mobile**.
 
 ━━━━━━━━━━━━━━━━━━━━━━
 # 🔌 BUILT FOR FIVEM
@@ -87,35 +80,31 @@ Manage your installation through a responsive dashboard built for **desktop + mo
 > ### 🌐 Your FiveM server and website finally work together.
 
 ━━━━━━━━━━━━━━━━━━━━━━
-# 💰 PRICING
+# 🏆 BUILT FOR YOUR COMMUNITY
 ━━━━━━━━━━━━━━━━━━━━━━
 
-## 💎 **PREMIUM RESOURCE**
-### 💵 **PRICE: TO BE DETERMINED — TBD**
-
-Final pricing will be announced closer to release.
-
-Our goal is simple: deliver a **premium-quality FiveM resource** at a price that works for communities of different sizes.
-
-📢 **Licensing & pricing information coming soon.**
-
-━━━━━━━━━━━━━━━━━━━━━━
-# 🏆 WHO IS THIS FOR?
-━━━━━━━━━━━━━━━━━━━━━━
-
-🚔 Roleplay Communities  
-🏙️ Serious RP Communities  
+🚔 Roleplay & Serious RP Communities  
 👮 Emergency Services Communities  
 🎮 Gaming Communities  
-🌎 Public FiveM Servers  
-🔒 Whitelisted Communities  
+🌎 Public & Whitelisted Servers  
 🛠️ FiveM Developers  
-👥 Community Owners  
-⚙️ Server Management Teams  
+👥 Community Owners & Management Teams  
 
 Whether you're running **50 members or thousands**, the mission stays the same:
 
 > ### 💎 ONE PLACE TO MANAGE YOUR COMMUNITY.
+
+━━━━━━━━━━━━━━━━━━━━━━
+# 💰 PREMIUM RESOURCE
+━━━━━━━━━━━━━━━━━━━━━━
+
+### 💵 **PRICE: TO BE DETERMINED — TBD**
+
+Final pricing and licensing information will be announced closer to release. Our goal is to deliver a **premium-quality FiveM platform** at a price that works for communities of different sizes.
+
+> 💰 **PRICE:** `TBD`  
+> 🚧 **STATUS:** `IN ACTIVE DEVELOPMENT`  
+> 📅 **RELEASE:** `TO BE ANNOUNCED`
 
 ━━━━━━━━━━━━━━━━━━━━━━
 # 🚀 ONE COMMUNITY.
@@ -134,15 +123,7 @@ Whether you're running **50 members or thousands**, the mission stays the same:
 📱 Desktop + Mobile Friendly  
 🧩 QB-Core + Standalone Support  
 
-> 💰 **PRICE:** `TBD`  
-> 🚧 **STATUS:** `IN ACTIVE DEVELOPMENT`  
-> 📅 **RELEASE:** `TO BE ANNOUNCED`
-
-━━━━━━━━━━━━━━━━━━━━━━
-## 👀 FOLLOW THE DEVELOPMENT
-━━━━━━━━━━━━━━━━━━━━━━
-
-We're actively building and expanding **FiveM Community Hub** with:
+## 👀 **FOLLOW THE DEVELOPMENT**
 
 🔥 New Features • ⚡ New Integrations  
 🎨 UI Improvements • 🧩 Framework Support  
@@ -150,7 +131,6 @@ We're actively building and expanding **FiveM Community Hub** with:
 
 **More previews, pricing, licensing, and release information coming soon.**
 
-# 💎 FIVEM COMMUNITY HUB
-### *Built for Communities. Built for Staff. Built for FiveM.*
+### 💎 *Built for Communities. Built for Staff. Built for FiveM.*
 
 > 🚀 **Your community deserves more than another dashboard. Give it a Hub.**
