@@ -6,4 +6,4 @@ version '1.0.0'
 ui_page 'html/index.html'
 client_scripts {'client/config.lua','client/postals.lua','client/main.lua'}
 server_scripts {'config.lua','server/http.lua','server/main.lua'}
-files {'html/index.html','html/app.js','html/style.css','html/command.css','html/v3-shell.css','html/tablet-features.js','html/report-tab.js','html/data/postals.json','html/data/ocrp-postals.json'}
+files {'html/index.html','html/app.js','html/style.css','html/command.css','html/v3-shell.css','html/tablet-features.js','html/report-tab.js','html/data/postals.json','html/data/ocrp-postals.json','html/data/badger-postals.json'}

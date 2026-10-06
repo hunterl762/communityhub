@@ -8,10 +8,11 @@ Config.HudCommand = 'hubhud'
 Config.HudKey = 'F7'
 Config.HudEnabled = true -- Local default; saved /hubhud preference and website permissions still apply.
 
--- Use 'ocrp' for ocrp_postal_map artwork (no export needed).
+-- Use 'badger' for your Badger Essentials postals.lua coordinates (no export needed).
+-- 'ocrp' selects the generic OCRP coordinate list instead.
 -- Also supports 'auto', 'builtin' (new map), 'nearest-postal', or 'disabled'.
 Config.Postals = {
-    Provider = 'ocrp',
+    Provider = 'badger',
     Resource = 'nearest-postal',
     Export = 'getPostal',
     Fallback = true, -- Use our bundled postal map if the external resource is unavailable.
