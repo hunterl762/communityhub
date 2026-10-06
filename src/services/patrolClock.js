@@ -28,6 +28,7 @@ async function history(userId){
     ORDER BY p.clocked_in_at DESC,p.id DESC LIMIT 100`,params);
   const [events]=await db.query(`SELECT e.id,e.patrol_id,e.event_type,e.source,e.occurred_at,u.display_name,u.discord_username
     FROM patrol_clock_events e JOIN users u ON u.id=e.user_id ${userId?'WHERE e.user_id=?':''} ORDER BY e.id DESC LIMIT 100`,params);
-  return {sessions,events};
+  const [activeRows]=userId?await db.query("SELECT id,status,clocked_in_at,TIMESTAMPDIFF(SECOND,clocked_in_at,NOW()) duration_seconds FROM patrol_sessions WHERE user_id=? AND status='active' ORDER BY id DESC LIMIT 1",[userId]):[[]];
+  return {sessions,events,active:activeRows[0]||null};
 }
 module.exports={change,history};

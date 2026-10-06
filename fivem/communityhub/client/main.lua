@@ -28,7 +28,8 @@ RegisterNUICallback('chatRead',function(_,cb) TriggerServerEvent('communityhub:a
 RegisterNUICallback('chatSend',function(data,cb) TriggerServerEvent('communityhub:adminChat',data.message);cb({ok=true}) end)
 CreateThread(function() while true do Wait(1000);if open then SendNUIMessage({type='gameClock',hours=GetClockHours(),minutes=GetClockMinutes()}) end end end)
 
-local hudEnabled=GetResourceKvpString('communityhub:hud')~='off'
+local hudPreference=GetResourceKvpString('communityhub:hud')
+local hudEnabled=hudPreference=='on' or (hudPreference~='off' and Config.HudEnabled~=false)
 local theme=GetResourceKvpString('communityhub:theme') or 'dark'
 RegisterNUICallback('feature',function(data,cb)
     TriggerServerEvent('communityhub:feature',data.kind,data.request_id,data.data or {});cb({ok=true})
@@ -39,9 +40,10 @@ end)
 local function toggleHud() hudEnabled=not hudEnabled;SetResourceKvp('communityhub:hud',hudEnabled and 'on' or 'off');SendNUIMessage({type='hud',enabled=hudEnabled}) end
 RegisterCommand(Config.HudCommand or 'hubhud',toggleHud,false)
 RegisterNUICallback('hudToggle',function(_,cb) toggleHud();cb({ok=true}) end)
+RegisterNUICallback('ready',function(_,cb) SendNUIMessage({type='hud',enabled=hudEnabled});SendNUIMessage({type='appearance',theme=theme});TriggerServerEvent('communityhub:getProfile');cb({ok=true}) end)
 RegisterNUICallback('appearance',function(data,cb) if data.theme=='light' or data.theme=='dark' then theme=data.theme;SetResourceKvp('communityhub:theme',theme) end;cb({ok=true}) end)
 RegisterKeyMapping(Config.HudCommand or 'hubhud','Toggle Community Hub duty HUD','keyboard',Config.HudKey or 'F7')
 CreateThread(function() Wait(2000);SendNUIMessage({type='hud',enabled=hudEnabled});SendNUIMessage({type='appearance',theme=theme});TriggerServerEvent('communityhub:getProfile') end)
 
 -- Local nearest postal display; report records use server-derived coordinates.
-CreateThread(function() while true do Wait(2000);local coords=GetEntityCoords(PlayerPedId());SendNUIMessage({type='postal',code=CommunityHubPostals.nearest(coords.x,coords.y)}) end end)
+CreateThread(function() while true do Wait(math.max(500,tonumber((Config.Postals or {}).RefreshMs) or 2000));local coords=GetEntityCoords(PlayerPedId());SendNUIMessage({type='postal',code=CommunityHubPostals.current(coords.x,coords.y)}) end end)

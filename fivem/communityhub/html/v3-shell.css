@@ -22,3 +22,5 @@ html[data-theme=light] #tablet.v3-shell{--ops-bg:#eef2f6;--ops-rail:#e5ebf2;--op
 #tablet.v3-shell .tablet-header .close-button{display:inline-flex;align-items:center;justify-content:center;flex:0 0 27px;width:27px;height:27px;min-width:27px;padding:0;line-height:1;color:var(--ops-text);background:var(--ops-panel);border:1px solid var(--ops-line)}
 #tablet.v3-shell .tablet-header .close-button svg{display:block;width:14px;height:14px;flex:none;pointer-events:none}
 #tablet.v3-shell .tablet-header .close-button:hover{background:var(--ops-panel2);filter:none}
+
+.duty-elapsed strong{display:block;font-size:28px;font-variant-numeric:tabular-nums;letter-spacing:.04em}.mini-hud #hudDuty{font-variant-numeric:tabular-nums}

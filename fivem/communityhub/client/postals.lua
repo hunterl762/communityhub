@@ -8,3 +8,24 @@ function CommunityHubPostals.nearest(x,y)
     for _,p in ipairs(rows) do local d=(p.x-x)^2+(p.y-y)^2;if d<distance then best=p;distance=d end end
     return best and best.code or nil
 end
+function CommunityHubPostals.current(x,y)
+    local settings = Config.Postals or {}
+    local provider = settings.Provider or 'builtin'
+    if provider == 'disabled' then return nil end
+    if provider == 'nearest-postal' then
+        local resource = settings.Resource or 'nearest-postal'
+        local exportName = settings.Export or 'getPostal'
+        if GetResourceState(resource) == 'started' then
+            local ok, code = pcall(function() local api=exports[resource]; return api[exportName](api) end)
+            if ok then
+                if type(code) == 'table' then code = code.code end
+                if type(code) == 'string' or type(code) == 'number' then
+                    code = tostring(code):gsub('^%s+', ''):gsub('%s+$', '')
+                    if #code > 0 and #code <= 16 and code:match('^[%w_-]+$') then return code end
+                end
+            end
+        end
+        if settings.Fallback == false then return nil end
+    end
+    return CommunityHubPostals.nearest(x,y)
+end

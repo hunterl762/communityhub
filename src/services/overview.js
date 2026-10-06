@@ -8,7 +8,7 @@ async function load(user){
     db.query('SELECT id,title,start_at,location FROM training_sessions WHERE start_at>=NOW() ORDER BY start_at LIMIT 4'),
     db.query('SELECT id,title,start_at,event_type FROM calendar_events WHERE start_at>=NOW() ORDER BY start_at LIMIT 4'),
     db.query('SELECT a.id,a.status,a.submitted_at,f.title FROM applications a JOIN application_forms f ON f.id=a.form_id WHERE a.user_id=? ORDER BY a.id DESC LIMIT 4',[user.id]),
-    db.query("SELECT p.clocked_in_at,p.callsign,d.name department_name,s.name server_name FROM patrol_sessions p LEFT JOIN departments d ON d.id=p.department_id LEFT JOIN fivem_servers s ON s.id=p.server_id WHERE p.user_id=? AND p.status='active' LIMIT 1",[user.id]),
+    db.query("SELECT TIMESTAMPDIFF(SECOND,p.clocked_in_at,NOW()) duration_seconds,p.clocked_in_at,p.callsign,d.name department_name,s.name server_name FROM patrol_sessions p LEFT JOIN departments d ON d.id=p.department_id LEFT JOIN fivem_servers s ON s.id=p.server_id WHERE p.user_id=? AND p.status='active' LIMIT 1",[user.id]),
     db.query('SELECT title,message,priority FROM fivem_announcements WHERE is_active=1 AND (expires_at IS NULL OR expires_at>NOW()) ORDER BY id DESC LIMIT 4'),
     reviewer?db.query("SELECT (SELECT COUNT(*) FROM applications WHERE status='submitted') applications,(SELECT COUNT(*) FROM reports WHERE status='open') reports,(SELECT COUNT(*) FROM applications WHERE status='interview') interviews"):Promise.resolve([[]]),
     flowManager?db.query("SELECT r.id,r.status,r.trigger_type,r.error_message,r.started_at,f.name flow_name FROM automation_runs r JOIN automation_flows f ON f.id=r.flow_id WHERE r.status='failed' ORDER BY r.started_at DESC LIMIT 5"):Promise.resolve([[]]),
