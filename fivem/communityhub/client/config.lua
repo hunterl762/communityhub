@@ -8,9 +8,9 @@ Config.HudCommand = 'hubhud'
 Config.HudKey = 'F7'
 Config.HudEnabled = true -- Local default; saved /hubhud preference and website permissions still apply.
 
--- Use 'builtin', 'nearest-postal', or 'disabled'. External resource/export names are configurable.
+-- Use 'auto', 'builtin', 'nearest-postal', or 'disabled'. Auto prefers the external resource.
 Config.Postals = {
-    Provider = 'builtin',
+    Provider = 'auto',
     Resource = 'nearest-postal',
     Export = 'getPostal',
     Fallback = true, -- Use our bundled postal map if the external resource is unavailable.

@@ -46,4 +46,13 @@ RegisterKeyMapping(Config.HudCommand or 'hubhud','Toggle Community Hub duty HUD'
 CreateThread(function() Wait(2000);SendNUIMessage({type='hud',enabled=hudEnabled});SendNUIMessage({type='appearance',theme=theme});TriggerServerEvent('communityhub:getProfile') end)
 
 -- Local nearest postal display; report records use server-derived coordinates.
+RegisterCommand('hubpostal',function()
+    local coords=GetEntityCoords(PlayerPedId())
+    CommunityHubPostals.current(coords.x,coords.y)
+    local status=CommunityHubPostals.status()
+    local message=('Postal: %s | Provider: %s'):format(status.code or 'unavailable',status.source)
+    if status.reason then message=message..' | '..status.reason end
+    print('[CommunityHub] '..message)
+    TriggerEvent('chat:addMessage',{args={'CommunityHub',message}})
+end,false)
 CreateThread(function() while true do Wait(math.max(500,tonumber((Config.Postals or {}).RefreshMs) or 2000));local coords=GetEntityCoords(PlayerPedId());SendNUIMessage({type='postal',code=CommunityHubPostals.current(coords.x,coords.y)}) end end)

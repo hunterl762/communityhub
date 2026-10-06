@@ -25,8 +25,10 @@ ensure nearest-postal
 ensure communityhub
 ```
 
-Resource/export names can be changed for compatible forks. Strings, numbers and `{code=...}` results are supported. A missing/stopped resource, failed export or empty result uses the bundled map when `Fallback=true`; otherwise the display reports postal unavailable. `Provider='builtin'` uses the bundled dataset, and `Provider='disabled'` disables postal display. Refresh intervals have a 500ms minimum.
+Resource/export names can be changed for compatible forks. Strings, numbers and `{code=...}` results are supported. A missing/stopped resource, failed export or empty result uses the bundled map when `Fallback=true`; otherwise the display reports postal unavailable. The default `Provider='auto'` prefers the configured external resource whenever it is running. `Provider='builtin'` uses the bundled dataset, and `Provider='disabled'` disables postal display. Refresh intervals have a 500ms minimum.
 
 This provider controls the tablet/HUD postal display. Reports continue using server-derived coordinates and the website's own postal dataset. If the external resource uses a different map, update the bundled dataset to the same map before expecting stored report postals to match. Client-supplied postal codes are not trusted for report records.
 
 Run `node tests/duty-hud.cjs`, the existing FiveM NUI regression test, and `tests/client-postals.lua` with a Lua test runner. Real FiveM connection, startup and native/export behavior should also be checked after deployment; browser and mocked Lua tests do not measure live game performance.
+
+Use `/hubpostal` in game to print the selected provider, postal, and any resource/export failure to chat and F8. If it reports `builtin` with a missing/stopped-resource reason, match `Config.Postals.Resource` to your actual postal resource folder and ensure it before CommunityHub. Client-only postal settings go in `client/config.lua`, not the server API configuration.
