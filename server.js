@@ -143,6 +143,7 @@ app.use("/applications", require("./src/routes/applications"));
 app.use("/reports", require("./src/routes/reports"));
 app.use("/calendar", require("./src/routes/calendar"));
 app.use("/training", require("./src/routes/training"));
+app.use("/", require("./src/routes/community"));
 app.use("/lms/admin", require("./src/routes/lmsAdmin"));
 app.use("/lms", require("./src/routes/lms"));
 app.use("/documents", require("./src/routes/documents"));

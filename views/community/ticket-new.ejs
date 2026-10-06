@@ -1,0 +1,4 @@
+<%- include('../partials/header') %>
+<section class="page-head"><div><p class="eyebrow">Support</p><h1>New ticket</h1><p>Your conversation is visible to you and support staff.</p></div><a class="btn secondary" href="/support">My tickets</a></section>
+<form method="post" action="/support" class="community-reading community-editor"><input type="hidden" name="_csrf" value="<%= csrf %>"><label>Category<select name="category"><option value="question">Question</option><option value="bug">Bug</option><option value="report">Report</option><option value="appeal">Appeal</option></select></label><label>Subject<input name="subject" required maxlength="180"></label><label>What can we help with?<textarea name="message" rows="10" required maxlength="10000"></textarea></label><p class="muted">Include relevant details, but do not share passwords or account secrets.</p><button class="btn">Submit ticket</button></form>
+<%- include('../partials/footer') %>
