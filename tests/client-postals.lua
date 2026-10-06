@@ -2,7 +2,8 @@ Config={Postals={Provider='builtin'}}
 local state='started'
 local result='902'
 local broken=false
-function LoadResourceFile() return 'fixture' end
+local loadedFile
+function LoadResourceFile(_,file) loadedFile=file;return 'fixture' end
 function GetCurrentResourceName() return 'communityhub' end
 json={decode=function() return {{code='101',x=0,y=0},{code='202',x=100,y=100}} end}
 function GetResourceState() return state end
@@ -21,4 +22,7 @@ Config.Postals.Fallback=false;assert(CommunityHubPostals.current(100,100)==nil)
 state='started';broken=true;assert(CommunityHubPostals.current(0,0)==nil)
 broken=false;result='<script>';assert(CommunityHubPostals.current(0,0)==nil)
 Config.Postals.Provider='disabled';assert(CommunityHubPostals.current(0,0)==nil)
+Config.Postals.Provider='ocrp';dofile('fivem/communityhub/client/postals.lua')
+assert(loadedFile=='html/data/ocrp-postals.json')
+assert(CommunityHubPostals.current(0,0)=='101' and CommunityHubPostals.status().source=='ocrp')
 print('Passed: external postal export, returned strings/tables/numbers, stopped resource, failed export, fallback and disabled mode.')

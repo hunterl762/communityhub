@@ -32,3 +32,7 @@ This provider controls the tablet/HUD postal display. Reports continue using ser
 Run `node tests/duty-hud.cjs`, the existing FiveM NUI regression test, and `tests/client-postals.lua` with a Lua test runner. Real FiveM connection, startup and native/export behavior should also be checked after deployment; browser and mocked Lua tests do not measure live game performance.
 
 Use `/hubpostal` in game to print the selected provider, postal, and any resource/export failure to chat and F8. If it reports `builtin` with a missing/stopped-resource reason, match `Config.Postals.Resource` to your actual postal resource folder and ensure it before CommunityHub. Client-only postal settings go in `client/config.lua`, not the server API configuration.
+
+## OCRP map artwork
+
+`ocrp_postal_map` is a streamed map/radar resource, not a nearest-postal export provider. Use `Config.Postals.Provider='ocrp'` for this map. CommunityHub then calculates the nearest code using its included 865-entry OCRP coordinate file; no separate nearest-postal resource is required. The original new-postal dataset remains available through `Provider='builtin'`. Website report lookup defaults to OCRP; set `POSTAL_DATASET=new` in the website environment only if your server uses the newer map instead. Keep the client and website maps consistent. Restart CommunityHub after changing client provider settings, and restart the website after changing its dataset. `/hubpostal` should report `Provider: ocrp`.

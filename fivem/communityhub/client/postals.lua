@@ -1,6 +1,7 @@
 CommunityHubPostals={}
 local rows={}
-local raw=LoadResourceFile(GetCurrentResourceName(),'html/data/postals.json')
+local mapFile=(Config.Postals or {}).Provider=='ocrp' and 'html/data/ocrp-postals.json' or 'html/data/postals.json'
+local raw=LoadResourceFile(GetCurrentResourceName(),mapFile)
 if raw then local ok,data=pcall(json.decode,raw);if ok and type(data)=='table' then for _,p in ipairs(data) do if type(p.code)=='string' and #p.code<=16 and type(p.x)=='number' and type(p.y)=='number' then rows[#rows+1]=p end end end end
 function CommunityHubPostals.nearest(x,y)
     if type(x)~='number' or type(y)~='number' or x~=x or y~=y or math.abs(x)>20000 or math.abs(y)>20000 then return nil end
@@ -18,7 +19,7 @@ function CommunityHubPostals.current(x,y)
         return code
     end
     if provider == 'disabled' then return result(nil,'disabled','Postal display is disabled in client/config.lua.') end
-    if provider ~= 'auto' and provider ~= 'nearest-postal' and provider ~= 'builtin' then
+    if provider ~= 'auto' and provider ~= 'nearest-postal' and provider ~= 'builtin' and provider ~= 'ocrp' then
         return result(nil,'unavailable','Invalid postal Provider in client/config.lua.')
     end
     local reason
@@ -41,5 +42,5 @@ function CommunityHubPostals.current(x,y)
         end
         if settings.Fallback == false then return result(nil,'unavailable',reason) end
     end
-    return result(CommunityHubPostals.nearest(x,y),'builtin',reason)
+    return result(CommunityHubPostals.nearest(x,y),provider=='ocrp' and 'ocrp' or 'builtin',reason)
 end
