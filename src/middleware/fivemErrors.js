@@ -12,7 +12,7 @@ module.exports = function fivemErrors(error, req, res, next) {
   console.error('[FiveM API]', error.code || 'INTERNAL_ERROR');
   const schemaErrors = ['ER_NO_SUCH_TABLE', 'ER_BAD_FIELD_ERROR'];
   const errorMessage = schemaErrors.includes(error.code)
-    ? (req.path.startsWith('/community/') || req.path.startsWith('/support/')
+    ? (['/report','/reports/read','/reports/update'].includes(req.path) ? 'Report synchronization schema is incomplete. Apply migration 024 after migration 023.' : req.path.startsWith('/community/') || req.path.startsWith('/support/')
       ? 'Community content/support schema is incomplete. Apply migration 023 after migration 022.'
       : 'FiveM database schema is incomplete. Apply migrations 005, 006 and 007 after migration 004.')
     : 'Community Hub could not complete the request. Check website logs and the database connection.';
