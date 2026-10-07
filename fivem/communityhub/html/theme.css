@@ -1,0 +1,54 @@
+/* Same CommunityHub visual language as the website; all assets work offline in NUI. */
+:root,html[data-theme=dark]{color-scheme:dark;--bg:#06060d;--panel:#101019;--raised:#1a1a25;--line:#2d2d3b;--text:#f0f0f4;--muted:#aaaab8;--accent:#ff4565;--button:#dc123b;--ops-bg:var(--bg);--ops-rail:#0d0d16;--ops-panel:var(--panel);--ops-panel2:var(--raised);--ops-line:var(--line);--ops-text:var(--text);--ops-muted:var(--muted);--ops-accent:var(--accent);--ops-good:#70d5ac;--ops-warn:#e9c27d;--ops-danger:#ff7e91;--accent-soft:#dc123b18}
+html[data-theme=light]{color-scheme:light;--bg:#f5f4f7;--panel:#fff;--raised:#eeedf2;--line:#d9d6df;--text:#24212c;--muted:#64606e;--accent:#b70e32;--button:#ca1238;--ops-rail:#fff;--ops-good:#167453;--ops-warn:#866015;--ops-danger:#b32140;--accent-soft:#ca12380d}
+#tablet.v3-shell{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);border-color:var(--line);border-radius:12px;grid-template-columns:200px minmax(0,1fr);grid-template-rows:64px minmax(0,1fr)}
+#tablet.v3-shell .tablet-header{min-height:64px;background:var(--panel);border-color:var(--line);padding:10px 16px}
+#tablet.v3-shell .tablet-brand h1{font-size:13px;letter-spacing:0;font-weight:650;color:var(--text)}
+#tablet.v3-shell .tablet-brand small{font-size:8px;color:var(--muted)}
+#tablet.v3-shell main{background:var(--bg);padding:26px 28px;color:var(--text);scrollbar-color:var(--line) transparent}
+#tablet.v3-shell .tablet-tabs{background:var(--ops-rail);padding:18px 10px;gap:5px;scrollbar-color:var(--line) transparent}
+#tablet.v3-shell .tablet-tabs button{font-size:12px;padding:11px 12px;border:1px solid transparent;border-radius:6px;min-height:40px;color:var(--muted);background:transparent;line-height:1.3}
+#tablet.v3-shell .tablet-tabs button:hover{background:var(--raised);border-color:var(--line);color:var(--text);filter:none}
+#tablet.v3-shell .tablet-tabs button.active{background:var(--accent-soft);border-color:var(--line);color:var(--text);box-shadow:inset 3px 0 var(--button)}
+#tablet.v3-shell .tablet-tabs .tab-icon{color:inherit}#tablet.v3-shell .tablet-tabs button.active .tab-icon{color:var(--accent)}
+#tablet.v3-shell h2{font-size:28px;letter-spacing:-.035em;font-weight:650;line-height:1.2;margin:6px 0 12px}
+#tablet.v3-shell h3{font-size:16px;font-weight:600}
+#tablet.v3-shell .eyebrow{color:var(--accent);font-size:9px;letter-spacing:.12em}
+#tablet.v3-shell .section-description,#tablet.v3-shell .section-head p{font-size:12px;line-height:1.7;color:var(--muted)}
+#tablet.v3-shell button{background:var(--button);border:1px solid var(--button);border-radius:6px;color:#fff;box-shadow:none;font-size:12px;min-height:36px;padding:9px 14px;line-height:1.3}
+#tablet.v3-shell button:hover{filter:brightness(1.1)}
+#tablet.v3-shell .secondary,#tablet.v3-shell .tablet-header button{background:var(--raised);color:var(--text);border-color:var(--line)}
+#tablet.v3-shell #tabletTheme{background:var(--bg);color:var(--text);border-color:var(--line);min-height:34px;border-radius:6px;font-size:11px}
+#tablet.v3-shell #hudToggle{min-height:34px;font-size:11px}
+#tablet.v3-shell .tablet-header .close-button{display:grid;place-items:center;flex:0 0 34px;width:34px;height:34px;min-width:34px;min-height:34px;padding:0;background:var(--raised);border:1px solid var(--line);color:var(--text);border-radius:6px}
+#tablet.v3-shell .close-button svg{width:14px;height:14px;display:block}
+#tablet.v3-shell input,#tablet.v3-shell select,#tablet.v3-shell textarea{background:var(--panel);color:var(--text);border-color:var(--line);border-radius:6px;font-size:12px;padding:10px 12px}
+#tablet.v3-shell :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#tablet.v3-shell .cards{gap:12px;border:0;margin-top:22px}
+#tablet.v3-shell .cards article{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:20px 16px;min-height:96px}
+#tablet.v3-shell .cards article:before{display:none}
+#tablet.v3-shell .cards span{font-size:9px;color:var(--muted)}#tablet.v3-shell .cards b{font-size:19px;color:var(--text);margin-top:10px}
+#tablet.v3-shell .home-shortcuts button{background:var(--panel);border-color:var(--line);padding:20px;min-height:116px;border-radius:8px;text-align:left}
+#tablet.v3-shell .home-shortcuts button:hover{border-color:var(--accent);box-shadow:none}
+#tablet.v3-shell .home-shortcuts span{font-size:13px;color:var(--text)}#tablet.v3-shell .home-shortcuts strong{color:var(--muted);font-size:11px}
+#tablet.v3-shell .record,#tablet.v3-shell .report-record,#tablet.v3-shell .link-panel,#tablet.v3-shell .terminal-note{background:var(--panel);color:var(--text);border-color:var(--line);border-radius:8px}
+#tablet.v3-shell .record{padding:18px;font-size:12px}#tablet.v3-shell .record span,#tablet.v3-shell small{color:var(--muted)}
+#tablet.v3-shell .record em{color:var(--ops-good);border-color:var(--line);background:var(--raised)}
+#tablet.v3-shell .community-chip{background:var(--accent-soft);border-color:var(--line);color:var(--accent)}
+#tablet.v3-shell .connection.linked{background:var(--raised);color:var(--ops-good);border-color:var(--line)}
+#tablet.v3-shell .hub-entry{padding-block:20px}#tablet.v3-shell .hub-message{padding-block:20px}
+#tablet.v3-shell .hub-conversation-actions{top:-26px;background:var(--bg);padding-block:12px}
+#tablet.v3-shell .hub-conversation-actions button,#tablet.v3-shell .hub-conversation-footer button{color:var(--text);background:var(--raised);border-color:var(--line)}
+html[data-theme=light] #tablet.v3-shell{--ops-bg:var(--bg);--ops-rail:var(--panel);--ops-panel:var(--panel);--ops-panel2:var(--raised);--ops-line:var(--line);--ops-text:var(--text);--ops-muted:var(--muted);background:var(--bg);color:var(--text)}
+html[data-theme=light] #tablet.v3-shell .tablet-header,html[data-theme=light] #tablet.v3-shell .tablet-tabs{background:var(--panel)}
+html[data-theme=light] #tablet.v3-shell main{background:var(--bg);color:var(--text)}
+html[data-theme=light] #tablet.v3-shell .tablet-tabs button.active{background:var(--accent-soft);color:var(--text)}
+html[data-theme=light] #tablet.v3-shell .tablet-tabs button:hover{background:var(--raised);color:var(--text)}
+html[data-theme=light] #tablet.v3-shell .record,html[data-theme=light] #tablet.v3-shell article{background:var(--panel);color:var(--text)}
+html[data-theme=light] #tablet.v3-shell .section-description{color:var(--muted)}
+.mini-hud,html[data-theme=light] .mini-hud{background:var(--panel);color:var(--text);border:1px solid var(--line);border-left:3px solid var(--button);border-radius:8px;box-shadow:0 12px 32px #0004}
+.mini-hud small,html[data-theme=light] .mini-hud small{color:var(--muted)}
+#notice{background:var(--panel);color:var(--text);border-color:var(--line)}
+@media(max-width:900px){#tablet.v3-shell{grid-template-columns:170px minmax(0,1fr)}#tablet.v3-shell main{padding:20px}#tablet.v3-shell .hub-conversation-actions{top:-20px}#tablet.v3-shell .cards{gap:10px}#tablet.v3-shell .tablet-header{padding:8px 12px}}
+@media(max-width:620px){#tablet.v3-shell{grid-template-columns:54px minmax(0,1fr)}#tablet.v3-shell .tablet-tabs{padding:12px 5px}#tablet.v3-shell .tablet-tabs button{justify-content:center;padding:10px 6px;min-height:40px}#tablet.v3-shell .tablet-tabs button span{display:none}#tablet.v3-shell main{padding:16px}#tablet.v3-shell .hub-conversation-actions{top:-16px}#tablet.v3-shell h2{font-size:25px}#tablet.v3-shell .cards{grid-template-columns:repeat(2,minmax(0,1fr))}#tablet.v3-shell .cards article{padding:14px 10px}#tablet.v3-shell .tablet-header{min-height:64px}#tablet.v3-shell .home-shortcuts{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
