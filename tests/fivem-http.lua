@@ -56,5 +56,9 @@ assert(calls==before,'invalid config performed an HTTP request')
 Config.ApiKey='test-only-key'
 Config.ApiBase='http://localhost:3020'
 run(200,'success','must end in /api/fivem')
+Config.ApiBase='[http://example.test:3020/api/fivem](http://example.test:3020/api/fivem)'
+before=calls
+run(200,'success','reachable website URL')
+assert(calls==before,'Markdown URL performed an HTTP request')
 for _,message in ipairs(logs) do assert(not message:find('test-only-key',1,true),'secret was logged') end
 io.write('Passed: Lua HTTP success, network/auth/redirect/rate-limit/API errors, malformed JSON, config validation, URL normalization and credential-safe logs.\n')
