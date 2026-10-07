@@ -1,6 +1,10 @@
 /* Same CommunityHub visual language as the website; all assets work offline in NUI. */
 :root,html[data-theme=dark]{color-scheme:dark;--bg:#06060d;--panel:#101019;--raised:#1a1a25;--line:#2d2d3b;--text:#f0f0f4;--muted:#aaaab8;--accent:#ff4565;--button:#dc123b;--ops-bg:var(--bg);--ops-rail:#0d0d16;--ops-panel:var(--panel);--ops-panel2:var(--raised);--ops-line:var(--line);--ops-text:var(--text);--ops-muted:var(--muted);--ops-accent:var(--accent);--ops-good:#70d5ac;--ops-warn:#e9c27d;--ops-danger:#ff7e91;--accent-soft:#dc123b18}
 html[data-theme=light]{color-scheme:light;--bg:#f5f4f7;--panel:#fff;--raised:#eeedf2;--line:#d9d6df;--text:#24212c;--muted:#64606e;--accent:#b70e32;--button:#ca1238;--ops-rail:#fff;--ops-good:#167453;--ops-warn:#866015;--ops-danger:#b32140;--accent-soft:#ca12380d}
+/* Keep CEF's game canvas transparent; dark color-scheme on the root paints it black. */
+html,html[data-theme=dark],html[data-theme=light],body{background:transparent;color-scheme:normal}
+#tablet,#miniHud,#notice{color-scheme:dark}
+html[data-theme=light] #tablet,html[data-theme=light] #miniHud,html[data-theme=light] #notice{color-scheme:light}
 #tablet.v3-shell{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);border-color:var(--line);border-radius:12px;grid-template-columns:200px minmax(0,1fr);grid-template-rows:64px minmax(0,1fr)}
 #tablet.v3-shell .tablet-header{min-height:64px;background:var(--panel);border-color:var(--line);padding:10px 16px}
 #tablet.v3-shell .tablet-brand h1{font-size:13px;letter-spacing:0;font-weight:650;color:var(--text)}
