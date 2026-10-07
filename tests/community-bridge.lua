@@ -12,7 +12,7 @@ function TriggerClientEvent(name,src,id,body) replies[#replies+1]={name=name,src
 CommunityHubHttp={request=function(method,route,data,cb) calls[#calls+1]={method=method,route=route,data=data,cb=cb} end}
 dofile('fivem/communityhub/server/main.lua')
 local feature=handlers['communityhub:feature']
-local routes={newsRead='/community/news/read',newsPost='/community/news/read-post',rulesRead='/community/rules/read',ticketsRead='/support/tickets/read',ticketCreate='/support/tickets/create',ticketReply='/support/tickets/reply'}
+local routes={lmsRead='/lms/summary',newsRead='/community/news/read',newsPost='/community/news/read-post',rulesRead='/community/rules/read',ticketsRead='/support/tickets/read',ticketCreate='/support/tickets/create',ticketReply='/support/tickets/reply'}
 for kind,route in pairs(routes) do
  feature(kind,'abcdefghijklmnop',{license='license:forged',server_key='wrong',ticket_id=1})
  local call=calls[#calls];assert(call.method=='POST' and call.route==route)

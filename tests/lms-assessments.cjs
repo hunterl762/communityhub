@@ -5,12 +5,14 @@ if(!process.env.LMS_TEST_PORT)throw Error('Set LMS_TEST_PORT to a disposable Mar
 const mysql=require('mysql2/promise');
 const name='communityhub_lms_test_'+process.pid;
 process.env.DB_HOST='127.0.0.1';process.env.DB_PORT=process.env.LMS_TEST_PORT;process.env.DB_USER='root';process.env.DB_PASSWORD='';process.env.DB_NAME=name;
+require('../src/services/discord').isGuildMember=async()=>true;
+process.env.BASE_URL='http://website.example:3020';
 async function run(){
  const admin=await mysql.createConnection({host:'127.0.0.1',port:Number(process.env.LMS_TEST_PORT),user:'root',multipleStatements:true});
  const db=require('../src/db');
  try{
   await admin.query(`CREATE DATABASE ${name}; USE ${name};
-   CREATE TABLE users(id BIGINT UNSIGNED PRIMARY KEY,department_id BIGINT UNSIGNED NULL,fivem_license VARCHAR(100),is_active BOOLEAN DEFAULT TRUE);
+   CREATE TABLE users(id BIGINT UNSIGNED PRIMARY KEY,department_id BIGINT UNSIGNED NULL,fivem_license VARCHAR(100),is_active BOOLEAN DEFAULT TRUE,discord_id VARCHAR(32));
    CREATE TABLE departments(id BIGINT UNSIGNED PRIMARY KEY);
    CREATE TABLE certifications(id BIGINT UNSIGNED PRIMARY KEY,name VARCHAR(100));
    CREATE TABLE user_certifications(id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,user_id BIGINT UNSIGNED,certification_id BIGINT UNSIGNED,awarded_by BIGINT UNSIGNED NULL,awarded_at DATETIME,expires_at DATETIME NULL,notes TEXT,UNIQUE KEY(user_id,certification_id));
@@ -18,7 +20,7 @@ async function run(){
    CREATE TABLE audit_logs_v2(id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,user_id BIGINT UNSIGNED,action VARCHAR(120),entity_type VARCHAR(80),entity_id BIGINT UNSIGNED,metadata_json LONGTEXT);
    CREATE TABLE fivem_servers(id BIGINT UNSIGNED PRIMARY KEY,server_key VARCHAR(100),is_enabled BOOLEAN);
    CREATE TABLE fivem_api_keys(id BIGINT UNSIGNED PRIMARY KEY,server_id BIGINT UNSIGNED,key_hash VARCHAR(64),is_active BOOLEAN,last_used_at DATETIME);
-   INSERT INTO users VALUES(1,1,'license:learner',1),(2,1,'license:other',1),(3,1,'license:inactive',0);
+   INSERT INTO users VALUES(1,1,'license:learner',1,'111'),(2,1,'license:other',1,'222'),(3,1,'license:inactive',0,'333');
    INSERT INTO departments VALUES(1); INSERT INTO certifications VALUES(1,'Orientation'); INSERT INTO fivem_servers VALUES(1,'primary',1);`);
   for(const file of ['015_communityhub_flow.sql','021_lms_courses.sql','022_lms_assessment_attempts.sql','022_lms_assessment_attempts.sql'])await admin.query(fs.readFileSync(path.join(__dirname,'../sql/migrations',file),'utf8'));
   const lms=require('../src/services/lms'),author=require('../src/services/lmsAuthoring'),game=require('../src/services/gameLearning');
@@ -63,7 +65,7 @@ async function run(){
   await assert.rejects(game.progress('license:inactive','primary'),/inactive/);
   await assert.rejects(game.progress('missing','primary'),/not linked/);
   await assert.rejects(game.progress('license:learner','wrong'),/disabled/);
-  const express=require('express'),crypto=require('crypto'),app=express();
+  const express=require('express'),crypto=require('crypto'),app=express();app.use(express.json());
   const key=crypto.randomBytes(24).toString('hex');
   await db.query('INSERT INTO fivem_api_keys VALUES(1,1,?,1,NULL)',[crypto.createHash('sha256').update(key).digest('hex')]);
   app.use('/api/fivem',require('../src/routes/fivemApi'));
@@ -78,6 +80,11 @@ async function run(){
     const response=await get('requirements',{license:'license:learner',server_key:'primary'});assert.equal(response.status,200);assert.equal(response.headers.get('cache-control'),'no-store');
     const payload=await response.json();assert.equal(payload.courses[0].id,1);assert(!JSON.stringify(payload).includes('is_correct'));assert(!JSON.stringify(payload).includes('answer_text'));
     assert.equal((await get('progress',{license:'license:inactive',server_key:'primary'})).status,403);
+    const summaryResponse=await fetch(base+'summary',{method:'POST',headers:{'Content-Type':'application/json','x-communityhub-key':key},body:JSON.stringify({license:'license:learner',server_key:'primary'})});assert.equal(summaryResponse.status,200);const summary=await summaryResponse.json();assert.equal(summary.website_url,'http://website.example:3020/lms');assert.equal(summary.courses[0].status,'completed');assert.equal(Number(summary.courses[0].progress_percent),100);assert(summary.certifications.length);assert(!JSON.stringify(summary).includes('is_correct'));
+    await db.query('UPDATE user_certifications SET expires_at=DATE_SUB(NOW(),INTERVAL 1 DAY) WHERE user_id=1');
+    const expired=await require('../src/services/gameLearning').summary('license:learner','primary');assert.equal(expired.certifications[0].validity_status,'expired');assert.equal((await require('../src/services/gameLearning').progress('license:learner','primary')).certifications.length,0);
+    require('../src/services/discord').isGuildMember=async()=>false;assert.equal((await get('progress',{license:'license:learner',server_key:'primary'})).status,403);
+
   }finally{await new Promise(r=>listener.close(r));}
   console.log('LMS integration passed: MariaDB migration/replay, authoring, grading, retries, concurrent completion, certification expiry, workflow and linked-user isolation.');
  }finally{await db.end();await admin.query(`DROP DATABASE IF EXISTS ${name}`);await admin.end();}

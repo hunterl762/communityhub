@@ -65,7 +65,7 @@ AddEventHandler('playerDropped',function() featureBudget[source]=nil end)
 RegisterNetEvent('communityhub:feature',function(kind,requestId,data)
     local src=source;local lic=licenseFor(src)
     if not lic or type(requestId)~='string' or #requestId<16 or #requestId>64 or not requestId:match('^[%w_-]+$') or type(data)~='table' then return end
-    local routes={appCatalog='/applications/catalog',appForm='/applications/form',appSubmit='/applications/submit',reportsRead='/reports/read',reportsAction='/reports/update',newsRead='/community/news/read',newsPost='/community/news/read-post',rulesRead='/community/rules/read',ticketsRead='/support/tickets/read',ticketCreate='/support/tickets/create',ticketReply='/support/tickets/reply'}
+    local routes={lmsRead='/lms/summary',appCatalog='/applications/catalog',appForm='/applications/form',appSubmit='/applications/submit',reportsRead='/reports/read',reportsAction='/reports/update',newsRead='/community/news/read',newsPost='/community/news/read-post',rulesRead='/community/rules/read',ticketsRead='/support/tickets/read',ticketCreate='/support/tickets/create',ticketReply='/support/tickets/reply'}
     if not routes[kind] then return end
     local now=GetGameTimer();local budget=featureBudget[src]
     if not budget or now-budget.start>=60000 then budget={start=now,count=0};featureBudget[src]=budget end
