@@ -1,0 +1,15 @@
+{
+ "name": "communityhub/php-dashboard",
+ "description": "CommunityHub CMS, LMS and FiveM integration for PHP hosting",
+ "type": "project",
+ "require": {
+  "php": ">=8.2",
+  "ext-pdo": "*",
+  "ext-pdo_mysql": "*",
+  "ext-curl": "*",
+  "ext-mbstring": "*",
+  "ext-fileinfo": "*",
+  "league/commonmark": "^2.7"
+ },
+ "config": {"allow-plugins": {}, "sort-packages": true}
+}

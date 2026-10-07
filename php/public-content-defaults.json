@@ -1,0 +1,23 @@
+{
+  "description": "A connected FiveM roleplay community. Explore our departments, events and community stories.",
+  "public_url": "",
+  "hero_title": "Real roleplay. Real community.",
+  "hero_image": "/images/community-city-v3.png",
+  "hero_body": "Find your department. Build your skills. Stay connected to the people and operations that make your community.",
+  "side_title": "From your first application to your next patrol.",
+  "highlights": "Apply and find your place\nTrain with your department\nTake part in live operations",
+  "section_title": "Our community",
+  "section_body": "Meet new people, create memorable stories and find your place in our community.",
+  "cta_title": "Your next chapter starts here.",
+  "cta_body": "Connect your Discord account and join the community workspace.",
+  "cta_label": "Continue with Discord",
+  "cta_url": "/auth/login",
+  "about_title": "About our community",
+  "about_body": "We bring players together through meaningful roleplay, shared training and community events.",
+  "gallery_title": "Community gallery",
+  "gallery_body": "Stories and moments from our community.",
+  "show_stats": true,
+  "show_resources": true,
+  "show_section": true,
+  "show_cta": true
+}

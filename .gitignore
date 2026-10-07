@@ -4,3 +4,5 @@ storage/uploads/*
 !storage/uploads/.gitkeep
 npm-debug.log*
 .DS_Store
+php/vendor/
+php/storage/

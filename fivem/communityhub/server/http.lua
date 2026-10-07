@@ -29,6 +29,14 @@ function CommunityHubHttp.request(method, path, data, cb)
     end
     if invalid then return finish(0, failure(0, invalid)) end
     local url = Config.ApiBase:gsub('/+$', '') .. path
+    local serverKey = tostring(Config.ServerKey or 'primary')
+    if method == 'GET' then
+        -- Include the configured scope for PHP and existing website routes.
+        local encodedKey = serverKey:gsub('([^%w%-_%.~])', function(c) return string.format('%%%02X', string.byte(c)) end)
+        url = url .. (url:find('?', 1, true) and '&' or '?') .. 'server_key=' .. encodedKey
+    elseif type(data) == 'table' and data.server_key == nil then
+        data.server_key = serverKey
+    end
     PerformHttpRequest(url, function(status, body)
         status = tonumber(status) or 0
         local decoded

@@ -34,6 +34,16 @@ run(200,'success')
 assert(captured.url=='http://localhost:3020/api/fivem/link','trailing slash not normalized')
 assert(captured.headers['x-communityhub-key']=='test-only-key')
 assert(captured.options.followLocation==false,'credentials must not follow redirects')
+status,response=200,'success'
+Config.ServerKey='secondary'
+CommunityHubHttp.request('GET','/tablet',nil)
+assert(captured.url=='http://localhost:3020/api/fivem/tablet?server_key=secondary','GET scope missing')
+CommunityHubHttp.request('GET','/community/news?q=test',nil)
+assert(captured.url:find('&server_key=secondary',1,true),'query scope separator incorrect')
+local payload={license='license:test'}
+CommunityHubHttp.request('POST','/patrol/history',payload)
+assert(payload.server_key=='secondary','POST scope missing')
+Config.ServerKey=nil
 run(0,nil,'Cannot reach')
 run(-1,'','Cannot reach')
 run(401,'<html>','authentication')

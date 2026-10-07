@@ -1,0 +1,8 @@
+main > .panel, main > .grid, main > .stats { margin-bottom: 24px; }
+.duty-controls .community-editor { display: inline-flex; vertical-align: bottom; margin: 12px 12px 0 0; gap: 12px; }
+.duty-controls .community-editor label { margin: 0; min-width: 200px; }
+.duty-controls .community-editor button { align-self: flex-end; }
+.option-row { display: flex; gap: 10px; align-items: center; margin: 8px 0; font-weight: normal; }
+.option-row input { width: auto; flex: none; }
+.topnav-actions .icon-button svg { width: 20px; height: 20px; }
+@media (max-width: 600px) { .duty-controls .community-editor { display: flex; } }
