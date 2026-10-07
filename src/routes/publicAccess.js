@@ -22,7 +22,7 @@ router.get(['/fivem/status','/fivem/status/data'],action(async(req,res)=>{
 router.get(['/personnel','/personnel/:id'],publicVisitor,action(async(req,res,next)=>{
   if(req.params.id&&!/^\d+$/.test(req.params.id))return next();
   const params=req.params.id?[req.params.id]:[];
-  const [members]=await db.query("SELECT u.id,u.display_name,u.callsign,u.rank_name,d.name department_name FROM users u LEFT JOIN departments d ON d.id=u.department_id WHERE u.is_active=1 AND u.member_status IN('recruit','active','loa','inactive')"+(req.params.id?' AND u.id=?':'')+' ORDER BY d.name,u.rank_name,u.display_name',params);
+  const [members]=await db.query("SELECT u.id,u.display_name,u.avatar_url,u.bio,u.callsign,u.rank_name,d.name department_name FROM users u LEFT JOIN departments d ON d.id=u.department_id WHERE u.is_active=1 AND u.member_status IN('recruit','active','loa','inactive')"+(req.params.id?' AND u.id=?':'')+' ORDER BY d.name,u.rank_name,u.display_name',params);
   if(req.params.id&&!members.length)return next();
   res.render('public/directory',{members,profile:!!req.params.id});
 }));

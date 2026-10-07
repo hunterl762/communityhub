@@ -1,0 +1,1 @@
+<span class="account-picture" aria-hidden="true"><span><%= (person.display_name||person.discord_username||'M').slice(0,1).toUpperCase() %></span><% if(person.avatar_url&&/^https:\/\/cdn\.discordapp\.com\/(avatars|embed\/avatars)\//.test(person.avatar_url)){ %><img src="<%= person.avatar_url %>" alt="" referrerpolicy="no-referrer" data-avatar-image><% } %></span>

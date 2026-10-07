@@ -1,0 +1,12 @@
+const assert=require('node:assert/strict'),express=require('express'),path=require('path'),db=require('../src/db');
+const writes=[];db.query=async(sql,params)=>{if(sql.startsWith('UPDATE')){writes.push(params);return [{affectedRows:1}];}return [[{id:4,username:'Member',display_name:'Member',discord_id:'123',role:'member',bio:'<script>bad()</script>'}]];};
+(async()=>{const app=express();app.set('views',path.resolve(__dirname,'../views'));app.set('view engine','ejs');app.use(express.urlencoded({extended:true}));app.use((req,res,next)=>{req.session={user:req.get('x-test-user')?{id:4,role:'member'}:null,profileToken:'valid-token'};Object.assign(res.locals,{user:req.session.user,communityName:'Community',cookieAccepted:true,unreadNotifications:0,currentPath:'/account'});next();});app.use('/account',require('../src/routes/account'));const s=app.listen(0);await new Promise(r=>s.once('listening',r));const url='http://localhost:'+s.address().port+'/account';
+try{const post=(body,auth=true)=>fetch(url+'/bio',{method:'POST',redirect:'manual',headers:{'Content-Type':'application/x-www-form-urlencoded',...(auth?{'x-test-user':'1'}:{})},body:new URLSearchParams(body)});
+assert.equal((await post({_csrf:'valid-token',bio:'Hello'},false)).status,302);
+assert.equal((await post({_csrf:'wrong',bio:'Hello'})).status,403);assert.equal(writes.length,0);
+assert.equal((await post({_csrf:'valid-token',bio:'x'.repeat(1001)})).status,400);assert.equal(writes.length,0);
+assert.equal((await post({_csrf:'valid-token',bio:'  <script>bad()</script>  ',user_id:'999'})).status,302);assert.deepEqual(writes[0],['<script>bad()</script>',4]);
+assert.equal((await post({_csrf:'valid-token',bio:''})).status,302);assert.deepEqual(writes[1],['',4]);
+const r=await fetch(url,{headers:{'x-test-user':'1'}});const html=await r.text();assert.equal(r.status,200);assert(html.includes('&lt;script&gt;bad()&lt;/script&gt;'));assert(!html.includes('<script>bad()</script>'));assert(html.includes('visible on your public member profile'));
+console.log('Passed: sign-in, CSRF, bio length, own-account updates, clearing a bio and escaped rendering.');
+}finally{await new Promise(r=>s.close(r));await db.end();}})().catch(e=>{console.error(e);process.exitCode=1});
