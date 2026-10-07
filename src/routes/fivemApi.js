@@ -21,7 +21,14 @@ router.post('/game-time',async(req,res,next)=>{try{const hours=req.body.hours,mi
 for(const kind of ['catalog','form','submit'])router.post('/applications/'+kind,async(req,res,next)=>{try{const service=require('../services/applications'),license=String(req.body.license||'');const result=kind==='catalog'?await service.catalog(license):kind==='form'?await service.form(license,req.body.form_id):await service.submit(license,req.body);res.set('Cache-Control','no-store').json(result);}catch(e){if(e.status)return res.status(e.status).json({ok:false,error:e.message});next(e);}});
 for(const endpoint of ['progress','requirements'])router.get('/lms/'+endpoint,async(req,res,next)=>{try{res.set('Cache-Control','no-store').json(await require('../services/gameLearning')[endpoint](String(req.query.license||''),String(req.query.server_key||'')));}catch(e){if(e.status)return res.status(e.status).json({ok:false,error:e.message});next(e);}});
 const communityGame=require('../services/gameCommunity');
-const communityRead=fn=>async(req,res,next)=>{try{res.set('Cache-Control','no-store').json(await fn(req));}catch(e){if(e.status)return res.status(e.status).json({ok:false,error:e.message});next(e);}};
+const communityRead=fn=>async(req,res,next)=>{try{req.body=req.body||{};res.set('Cache-Control','no-store').json(await fn(req));}catch(e){if(e.status)return res.status(e.status).json({ok:false,error:e.message});next(e);}};
+const ticketWriteLimit=rateLimit({windowMs:15*60*1000,limit:30,keyGenerator:req=>String(req.body?.license||'unlinked'),message:{ok:false,error:'Too many ticket submissions. Please try again later.'}});
+router.post('/community/news/read',communityRead(req=>communityGame.news(req.body.server_key,req.body)));
+router.post('/community/news/read-post',communityRead(req=>communityGame.post(req.body.server_key,req.body.post_id)));
+router.post('/community/rules/read',communityRead(req=>communityGame.rules(req.body.server_key,req.body)));
+router.post('/support/tickets/read',communityRead(req=>communityGame.tickets(req.body.license,req.body.server_key,req.body.ticket_id)));
+router.post('/support/tickets/create',ticketWriteLimit,communityRead(req=>communityGame.createTicket(req.body.license,req.body.server_key,req.body)));
+router.post('/support/tickets/reply',ticketWriteLimit,communityRead(req=>communityGame.replyTicket(req.body.license,req.body.server_key,req.body)));
 router.get('/community/news',communityRead(req=>communityGame.news(req.query.server_key,req.query)));
 router.get('/community/news/:id',communityRead(req=>communityGame.post(req.query.server_key,req.params.id)));
 router.get('/community/rules',communityRead(req=>communityGame.rules(req.query.server_key,req.query)));

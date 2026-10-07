@@ -27,12 +27,16 @@ The existing API authentication applies to every endpoint below. Include `x-comm
 | GET `/api/fivem/support/tickets` | `server_key`, `license` | `ok`, linked member's `tickets` |
 | GET `/api/fivem/support/tickets/:id` | `server_key`, `license` | `ok`, `ticket`, `messages` |
 
-Only published news and rules are exposed. Ticket endpoints require an active linked account and return only its own conversations, including when that linked account is staff. The API has no support-write endpoint or staff queue. Obtain `license` from the FiveM server's player identifiers rather than accepting arbitrary client identity. Credentials remain server-only. Future NUI consumers must render rule/ticket text with `textContent` and sanitize any Markdown rendering; API news bodies are not trusted HTML.
+Only published news and rules are exposed. Ticket endpoints require an active linked account and return only its own conversations, including when that linked account is staff. The API has no staff queue or staff status action. Authenticated ticket create/reply endpoints are listed below; they are restricted to the linked member's own tickets. Obtain `license` from the FiveM server's player identifiers rather than accepting arbitrary client identity. Credentials remain server-only. Future NUI consumers must render rule/ticket text with `textContent` and sanitize any Markdown rendering; API news bodies are not trusted HTML.
 
-The existing NUI is unchanged in this increment. These endpoints are the foundation for adding its news, rules and support tabs.
+The NUI now includes News, Rules and Support tabs. These use the same published content and private member conversations as the website.
 
 ## Validation and troubleshooting
 
 For a disposable MariaDB instance, set `$env:COMMUNITY_TEST_PORT='33318'` in PowerShell and run `node tests/community-support.cjs`. The test creates and drops its own isolated database. It covers migration replay, draft visibility, publication, safe Markdown, literal search, ticket isolation, live-role enforcement, replies and closure, atomic rollback, CSRF and scoped API authentication. Existing navigation/template and FiveM regression tests should continue to pass.
 
 If the new pages report missing tables, verify migration 023 was run in the website's configured database. If a member cannot see a ticket, confirm ownership and active-account status; another member's ticket intentionally returns 404. A 403 on a form may indicate expired CSRF state: reload the form and submit again. If a server-key request is rejected, match `server_key` to the key's assigned server in FiveM configuration.
+
+## NUI POST endpoints
+
+All require the same server-only API credential and `server_key`; the Lua bridge sets the player license from server identifiers. `POST /community/news/read` accepts optional `q`/`category`; `/community/news/read-post` accepts `post_id`; `/community/rules/read` accepts optional `q`. These paths are under `/api/fivem`. `POST /support/tickets/read` accepts `license` and optional `ticket_id`; `/support/tickets/create` accepts `license`, `subject`, `category`, `message`; `/support/tickets/reply` accepts `license`, `ticket_id`, `message`. Ticket writes have a 30-per-15-minute per-license limit. Ticket ownership is enforced even for staff; supplied user IDs, staff flags and status changes are ignored. All responses use no-store caching.

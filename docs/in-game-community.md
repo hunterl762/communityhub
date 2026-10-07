@@ -1,0 +1,13 @@
+# In-game News, Rules and Support
+
+Update both the website backend and the complete CommunityHub resource, preserving your server API key and client settings. The `community-tabs.js` asset must be included in the NUI and resource manifest. Restart the website and run `restart communityhub` in the FiveM server console. Existing migration 023 supplies the content and support tables; this increment needs no new migration. Migration 024 remains required for report synchronization.
+
+News and Rules are available to connected players. Only published website records are exposed. News supports search and article reading; articles are displayed as safe text in the NUI. Rules support search and keyboard-accessible disclosures by category.
+
+Support requires an active linked website account. Members can view their own tickets and staff replies, submit questions/bugs/reports/appeals, and reply to open conversations. Closed tickets reject replies until website support staff reopen them. Game support does not expose the staff queue or staff-only status changes, even when the player is a staff member. These tickets are separate from the existing report-submission/review workflow.
+
+The Lua bridge derives the license and server key on the server, applies its request budget, and targets responses to the requesting player. It rejects late replies after player replacement. The API verifies the server credential/scope, linked account and ticket ownership on every request, and rate-limits ticket writes. Client-supplied account IDs, staff flags and status fields cannot elevate access. The website keeps its existing staff queue and CSRF-protected forms.
+
+The NUI displays untrusted content with `textContent`, preserves unsent form text when submission fails, and clears private conversations when closed. Linked-account changes also clear private drafts. Requests that finish after close or identity change cannot paint their old data into the interface. No new polling loop is added: the tabs load on demand or explicit refresh.
+
+Run `tests/community-support.cjs` against a disposable MariaDB server for API ownership and write tests, `tests/community-bridge.lua` with a Lua runner for server-owned identity/route/budget tests, and the existing HUD/NUI regressions. After deployment, verify News/Rules content authored on the website appears in-game, create a ticket in-game and reply from the website, then refresh the conversation in-game. Attempting to open another member's ticket must fail. Submit one real in-game report to finish the live report-sync check; automated HTTP tests do not exercise an actual FiveM client.

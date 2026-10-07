@@ -24,3 +24,5 @@ html[data-theme=light] #tablet.v3-shell{--ops-bg:#eef2f6;--ops-rail:#e5ebf2;--op
 #tablet.v3-shell .tablet-header .close-button:hover{background:var(--ops-panel2);filter:none}
 
 .duty-elapsed strong{display:block;font-size:28px;font-variant-numeric:tabular-nums;letter-spacing:.04em}.mini-hud #hudDuty{font-variant-numeric:tabular-nums}
+
+.hub-search{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:16px 0}.hub-search label{margin:0}.hub-search input{width:240px;max-width:100%;margin:0}.hub-entry{border-bottom:1px solid var(--ops-line);padding:16px 0}.hub-entry h3{margin:4px 0 10px}.hub-text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7}.hub-ticket-form{max-width:700px}.hub-rule{border-bottom:1px solid var(--ops-line);padding:14px 0}.hub-rule summary{cursor:pointer;font-weight:600}.hub-thread-heading{display:flex;gap:10px;align-items:center;justify-content:space-between}

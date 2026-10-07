@@ -42,7 +42,7 @@ async function run(){
   assert.equal((await game.tickets('license:one','primary',ticketId)).messages.length,3);
   await assert.rejects(game.news('disabled',{}),/disabled/);await assert.rejects(game.tickets('license:inactive','primary'),/inactive/);
   const express=require('express'),session=require('express-session'),app=express();
-  app.set('view engine','ejs');app.set('views',path.join(__dirname,'../views'));app.use(express.urlencoded({extended:true}));
+  app.set('view engine','ejs');app.set('views',path.join(__dirname,'../views'));app.use(express.urlencoded({extended:true}));app.use(express.json());
   app.use(session({secret:crypto.randomBytes(32).toString('hex'),resave:false,saveUninitialized:false}));
   // Test-only session setup. Production obtains identity through its existing auth routes.
   app.use((req,res,next)=>{if(req.get('x-test-user'))req.session.user={id:Number(req.get('x-test-user')),role:'member'};Object.assign(res.locals,{communityName:'CommunityHub',user:req.session.user||null,currentPath:req.path,unreadNotifications:0,cookieAccepted:true});next();});
@@ -64,6 +64,16 @@ async function run(){
   assert.equal((await api('/support/tickets/'+ticketId,{server_key:'primary',license:'license:two'})).status,404);
   assert.equal((await api('/support/tickets/'+ticketId,{server_key:'primary',license:'license:staff'})).status,404);
   assert.equal((await api('/support/tickets/'+ticketId,{server_key:'primary',license:'license:one'})).status,200);
+  const postApi=(url,data)=>fetch(base+'/api/fivem'+url,{method:'POST',headers:{'Content-Type':'application/json','x-communityhub-key':key},body:JSON.stringify({server_key:'primary',...data})});
+  const created=await postApi('/support/tickets/create',{license:'license:one',subject:'From game',category:'bug',message:'NUI ticket',user_id:2});assert.equal(created.status,200);const gameId=(await created.json()).ticket_id;
+  assert.equal((await support.thread(1,gameId)).ticket.user_id,1);
+  assert.equal((await postApi('/support/tickets/reply',{license:'license:two',ticket_id:gameId,message:'Other member'})).status,404);
+  assert.equal((await postApi('/support/tickets/reply',{license:'license:staff',ticket_id:gameId,message:'Staff bypass'})).status,404);
+  assert.equal((await postApi('/support/tickets/reply',{license:'license:one',ticket_id:gameId,message:'Own reply',status:'closed',is_staff:1})).status,200);
+  assert.equal((await support.thread(1,gameId)).ticket.status,'open');
+  assert.equal((await postApi('/support/tickets/create',{license:'license:inactive',subject:'x',category:'bug',message:'x'})).status,403);
+  assert.equal((await postApi('/community/news/read',{q:'update'})).status,200);
+  await support.update(3,gameId,{status:'closed'},true);assert.equal((await postApi('/support/tickets/reply',{license:'license:one',ticket_id:gameId,message:'Closed reply'})).status,409);
   console.log('Passed: MariaDB migration replay, publishing, Markdown safety, literal search, ticket isolation, staff permissions, reply/status workflow, rollback, CSRF and scoped FiveM API.');
  }finally{if(listener)await new Promise(r=>listener.close(r));await db.end();await admin.query(`DROP DATABASE IF EXISTS ${name}`);await admin.end();}
 }

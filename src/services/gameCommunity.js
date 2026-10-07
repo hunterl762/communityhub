@@ -5,4 +5,6 @@ async function news(key,query){await server(key);return {ok:true,...await conten
 async function post(key,postId){await server(key);const p=await content.post(postId);return {ok:true,post:{id:p.id,title:p.title,category:p.category,tags:p.tags,summary:p.summary,body:p.body,published_at:p.published_at,updated_at:p.updated_at}};}
 async function rules(key,query){await server(key);return {ok:true,...await content.rules(query.q||'')};}
 async function tickets(license,key,ticketId){const user=await linked(license,key);if(!ticketId)return {ok:true,tickets:(await support.list(user.id)).tickets};const data=await support.thread(user.id,ticketId,true);return {ok:true,ticket:{id:data.ticket.id,subject:data.ticket.subject,category:data.ticket.category,status:data.ticket.status,created_at:data.ticket.created_at,updated_at:data.ticket.updated_at},messages:data.messages};}
-module.exports={news,post,rules,tickets};
+async function createTicket(license,key,data){const user=await linked(license,key);const ticketId=await support.create(user.id,{subject:data.subject,category:data.category,message:data.message});return {ok:true,ticket_id:ticketId};}
+async function replyTicket(license,key,data){const user=await linked(license,key);const ticketId=await support.update(user.id,data.ticket_id,{message:data.message},false,true);return {ok:true,ticket_id:ticketId};}
+module.exports={news,post,rules,tickets,createTicket,replyTicket};

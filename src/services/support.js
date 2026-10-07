@@ -19,19 +19,20 @@ async function create(userId,body){
  await notifyStaff(conn,userId,result.insertId,'New support ticket',subject);await audit(conn,userId,'support.created','support_ticket',result.insertId);await conn.commit();return result.insertId;
  }catch(e){await conn.rollback();throw e;}finally{conn.release();}
 }
-async function update(userId,ticketId,body,statusOnly=false){
+async function update(userId,ticketId,body,statusOnly=false,ownerOnly=false){
  const conn=await db.getConnection();try{await conn.beginTransaction();const user=await actor(userId,conn);
- const [[ticket]]=await conn.query('SELECT * FROM support_tickets WHERE id=? AND (?=1 OR user_id=?) FOR UPDATE',[id(ticketId),user.staff?1:0,userId]);if(!ticket)fail('Ticket not found.',404);
+ const asStaff=user.staff&&!ownerOnly;
+ const [[ticket]]=await conn.query('SELECT * FROM support_tickets WHERE id=? AND (?=1 OR user_id=?) FOR UPDATE',[id(ticketId),asStaff?1:0,userId]);if(!ticket)fail('Ticket not found.',404);
  let status;
- if(statusOnly){if(!user.staff)fail('Only support staff can change ticket status.',403);status=body.status;if(!STATUSES.includes(status))fail('Select a ticket status.');}
+ if(statusOnly){if(!asStaff)fail('Only support staff can change ticket status.',403);status=body.status;if(!STATUSES.includes(status))fail('Select a ticket status.');}
  else{
   if(ticket.status==='closed')fail('This ticket is closed. Ask support staff to reopen it.',409);
-  const message=text(body.message,'Reply',10000);await conn.query('INSERT INTO support_messages(ticket_id,user_id,is_staff,message) VALUES(?,?,?,?)',[ticket.id,userId,user.staff?1:0,message]);status=user.staff?'waiting_on_member':'open';
+  const message=text(body.message,'Reply',10000);await conn.query('INSERT INTO support_messages(ticket_id,user_id,is_staff,message) VALUES(?,?,?,?)',[ticket.id,userId,asStaff?1:0,message]);status=asStaff?'waiting_on_member':'open';
  }
  await conn.query('UPDATE support_tickets SET status=?,updated_at=NOW() WHERE id=?',[status,ticket.id]);
  await audit(conn,userId,statusOnly?'support.status_changed':'support.replied','support_ticket',ticket.id,{from:ticket.status,to:status});
- if(user.staff&&String(ticket.user_id)!==String(userId))await conn.query('INSERT INTO notifications(user_id,title,message,url) VALUES(?,?,?,?)',[ticket.user_id,statusOnly?'Support ticket updated':'Support replied',statusOnly?`Your ticket is now ${status.replaceAll('_',' ')}.`:'You have a new reply to your support ticket.',`/support/tickets/${ticket.id}`]);
- if(!user.staff)await notifyStaff(conn,userId,ticket.id,'Support reply received',ticket.subject);
+ if(asStaff&&String(ticket.user_id)!==String(userId))await conn.query('INSERT INTO notifications(user_id,title,message,url) VALUES(?,?,?,?)',[ticket.user_id,statusOnly?'Support ticket updated':'Support replied',statusOnly?`Your ticket is now ${status.replaceAll('_',' ')}.`:'You have a new reply to your support ticket.',`/support/tickets/${ticket.id}`]);
+ if(!asStaff)await notifyStaff(conn,userId,ticket.id,'Support reply received',ticket.subject);
  await conn.commit();return ticket.id;
  }catch(e){await conn.rollback();throw e;}finally{conn.release();}
 }
