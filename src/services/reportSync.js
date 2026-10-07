@@ -8,6 +8,7 @@ async function publish(conn,gameId){
  const [r]=await conn.query('INSERT INTO reports(reporter_user_id,report_type,description,status,assigned_to,created_at,fivem_report_id) VALUES(?,?,?,?,?,?,?)',[f.reporter_user_id,f.report_type,description,f.status,f.assigned_to,f.created_at,f.id]);return r.insertId;
 }
 async function submit(data){
+ const reportedName=String(data.reported_name||'').trim();if(reportedName.length>150)fail('Reported player name must be no more than 150 characters.');
  const subject=String(data.subject||'').trim(),details=String(data.details||'').trim();
  if(!subject||subject.length>160||!details||details.length>10000)fail('Provide a subject (up to 160 characters) and details (up to 10000 characters).');
  const types={failrp:'FailRP',vdm:'VDM',rdm:'RDM',player:'Player Report',staff:'Staff Report',other:'Other'};
@@ -18,7 +19,7 @@ async function submit(data){
   const coords=['position_x','position_y'].map(k=>typeof data[k]==='number'&&Number.isFinite(data[k])&&Math.abs(data[k])<=20000?data[k]:null);
   const postal=require('./postals').nearest(...coords)?.code||null;
   const [r]=await conn.query('INSERT INTO fivem_reports(reporter_user_id,server_id,report_type,subject,details,postal_code,position_x,position_y) VALUES(?,?,?,?,?,?,?,?)',[user?.id||null,server.id,types[data.report_type],subject,details,postal,...coords]);
-  const websiteId=await publish(conn,r.insertId);await conn.commit();return {ok:true,report_id:r.insertId,website_report_id:websiteId};
+  const websiteId=await publish(conn,r.insertId);await conn.query('UPDATE reports SET reported_name=? WHERE id=?',[reportedName||null,websiteId]);await conn.commit();return {ok:true,report_id:r.insertId,website_report_id:websiteId};
  }catch(e){await conn.rollback();throw e;}finally{conn.release();}
 }
 async function webStatus(reportId,userId,status,resolution){
