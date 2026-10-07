@@ -46,7 +46,7 @@ router.get('/discord/callback',async(req,res)=>{
       }
     }
     req.session.user=safeUser(user);
-    res.redirect('/account');
+    res.redirect('/overview');
   }catch(e){console.error('[Discord OAuth]',e.response?.data||e);res.redirect('/auth/login?error=Discord+authentication+failed');}
 });
 router.post('/logout',(req,res)=>req.session.destroy(()=>res.redirect('/')));

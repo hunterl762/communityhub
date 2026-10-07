@@ -1,0 +1,1 @@
+User-supplied Badger Essentials postals.lua, imported 2026-10-06 as 865 coordinate/code entries without executing the source. Included as matching public/data/badger-postals.json and resource html/data/badger-postals.json. Preserve the original project's terms when redistributing.

@@ -1,0 +1,4 @@
+<%- include('../partials/header') %>
+<section class="page-head"><div><p class="eyebrow"><%= post.category %></p><h1><%= post.title %></h1><p><%= post.summary %></p></div><a href="/news" class="btn secondary">All news</a></section>
+<article class="community-reading"><p class="muted">Published <%= new Date(post.published_at).toLocaleDateString('en-US') %> · Updated <%= new Date(post.updated_at).toLocaleDateString('en-US') %></p><div class="community-markdown"><%- post.html %></div><% if(post.tags){ %><p class="muted"><%= post.tags %></p><% } %></article>
+<%- include('../partials/footer') %>

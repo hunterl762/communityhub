@@ -1,0 +1,5 @@
+<%- include('../partials/header') %>
+<section class="page-head"><div><p class="eyebrow">Community</p><h1>Rules</h1><p>Read the expectations before joining a session.</p></div><% if(staff){ %><a href="/community/manage" class="btn secondary">Manage rules</a><% } %></section>
+<form method="get" class="community-search" role="search"><label for="rules-search">Search rules</label><input id="rules-search" name="q" value="<%= q %>" maxlength="120"><button class="btn secondary">Search</button><% if(q){ %><a href="/rules">Clear search</a><% } %></form>
+<div class="community-reading"><% if(!rules.length){ %><p class="muted">No published rules match this search.</p><% } %><% [...new Set(rules.map(r=>r.category))].forEach(category=>{ %><section class="community-entry"><h2><%= category %></h2><% rules.filter(r=>r.category===category).forEach(r=>{ %><details class="community-rule" <%= q?'open':'' %>><summary><%= r.title %></summary><p class="community-text"><%= r.body %></p><small class="muted">Last updated <%= new Date(r.updated_at).toLocaleDateString('en-US') %></small></details><% }) %></section><% }) %></div>
+<%- include('../partials/footer') %>

@@ -19,6 +19,12 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 if (process.env.NODE_ENV === "production") app.set("trust proxy", 1);
 app.use(helmet({ contentSecurityPolicy: false }));
+app.use(
+	"/api/fivem",
+	express.json(),
+	require("./src/routes/fivemApi"),
+	require("./src/middleware/fivemErrors"),
+);
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, limit: 500 }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -42,15 +48,41 @@ app.use(
 );
 app.use(async (req, res, next) => {
 	res.locals.user = req.session.user || null;
+	res.locals.currentPath = req.path;
 	res.locals.cookieAccepted =
 		req.cookies.communityhub_cookie_notice === "accepted";
 	res.locals.unreadNotifications = 0;
+	res.locals.communityLogo = null;
+	res.locals.communityLogoVersion = "default";
+	res.locals.publicContent = {
+		...require("./src/services/publicContent").DEFAULTS,
+	};
+	res.locals.publicDepartments = [];
+	res.locals.publicMetrics = null;
 	try {
-		const [[setting]] = await pool.query(
-			"SELECT setting_value FROM site_settings WHERE setting_key='community_name'",
-		);
-		res.locals.communityName =
-			setting?.setting_value || process.env.COMMUNITY_NAME || "Community Hub";
+		const brand = await require("./src/services/branding").load();
+		res.locals.communityName = brand.name;
+		res.locals.communityLogo = brand.logo;
+		res.locals.communityLogoVersion = brand.logoVersion;
+		res.locals.publicContent =
+			await require("./src/services/publicContent").load();
+		if (["/", "/home"].includes(req.path)) {
+			const [departments] = await pool.query(
+				"SELECT name,slug,description FROM departments WHERE is_active=1 ORDER BY id",
+			);
+			res.locals.publicDepartments = departments;
+			const [servers] = await pool.query(
+				"SELECT current_players,max_players,IF(last_heartbeat_at>DATE_SUB(NOW(),INTERVAL 90 SECOND),1,0) live FROM fivem_servers WHERE is_enabled=1",
+			);
+			res.locals.publicMetrics = {
+				capacity: servers.reduce((n, s) => n + Number(s.max_players || 0), 0),
+				players: servers
+					.filter((s) => Number(s.live))
+					.reduce((n, s) => n + Number(s.current_players || 0), 0),
+				online: servers.filter((s) => Number(s.live)).length,
+				servers: servers.length,
+			};
+		}
 		if (req.session.user?.id) {
 			const [[n]] = await pool.query(
 				"SELECT COUNT(*) count FROM notifications WHERE user_id=? AND is_read=0",
@@ -61,6 +93,12 @@ app.use(async (req, res, next) => {
 	} catch {
 		res.locals.communityName = process.env.COMMUNITY_NAME || "Community Hub";
 	}
+	res.locals.siteMetadata = require("./src/services/publicContent").metadata(
+		res.locals.publicContent,
+		res.locals.communityName,
+		res.locals.communityLogoVersion,
+		req.path,
+	);
 	next();
 });
 app.get("/cookie-notice/accept", (req, res) => {
@@ -73,6 +111,7 @@ app.get("/cookie-notice/accept", (req, res) => {
 	res.redirect(req.get("referer") || "/");
 });
 app.get("/", async (req, res) => {
+	if (req.session.user) return res.redirect("/overview");
 	let stats = { applications: 0, reports: 0, events: 0, documents: 0 };
 	try {
 		const [[a], [r], [e], [d]] = await Promise.all([
@@ -92,18 +131,32 @@ app.get("/", async (req, res) => {
 	} catch {}
 	res.render("index", { stats });
 });
+app.use(require("./src/routes/publicWebsite"));
+app.use(require("./src/routes/branding"));
+app.use("/admin/appearance", require("./src/routes/appearance"));
+app.use("/overview", require("./src/routes/overview"));
+app.use("/command-center/readiness", require("./src/routes/readiness"));
+app.use("/command-center", require("./src/routes/commandCenter"));
 app.use("/auth", require("./src/routes/auth"));
 app.use("/account", require("./src/routes/account"));
 app.use("/applications", require("./src/routes/applications"));
 app.use("/reports", require("./src/routes/reports"));
 app.use("/calendar", require("./src/routes/calendar"));
 app.use("/training", require("./src/routes/training"));
+app.use("/", require("./src/routes/community"));
+app.use("/lms/admin", require("./src/routes/lmsAdmin"));
+app.use("/lms", require("./src/routes/lms"));
 app.use("/documents", require("./src/routes/documents"));
 app.use("/personnel", require("./src/routes/personnel"));
+app.use("/staff-activity", require("./src/routes/staffActivity"));
+app.use("/loa-management", require("./src/routes/loaManagement"));
+app.use("/fivem", require("./src/routes/fivem"));
+app.use("/admin/fivem", require("./src/routes/fivemAdmin"));
 app.use(
 	"/admin/application-builder",
 	require("./src/routes/applicationBuilder"),
 );
+app.use("/admin/automations", require("./src/routes/automations"));
 app.use("/admin/management", require("./src/routes/management"));
 app.use("/admin", require("./src/routes/admin"));
 app.get("/health", async (req, res) => {
@@ -125,6 +178,17 @@ app.use((req, res) =>
 async function start() {
 	try {
 		await initializeSessionStore();
+		require("./src/services/fivemStatus").startMonitor();
+		setInterval(
+			() =>
+				require("./src/services/loaLifecycle")
+					.restoreExpired()
+					.catch((e) => console.error("[LOA restore]", e.message)),
+			15 * 60 * 1000,
+		);
+		require("./src/services/loaLifecycle")
+			.restoreExpired()
+			.catch((e) => console.error("[LOA restore]", e.message));
 		app.listen(PORT, () =>
 			console.log(`[Community Hub] http://127.0.0.1:${PORT}`),
 		);

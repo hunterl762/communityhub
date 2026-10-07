@@ -1,0 +1,8 @@
+const db=require('../db'),content=require('./communityContent'),support=require('./support');
+async function server(key){if(typeof key!=='string'||!key)content.fail('server_key is required.');const [[s]]=await db.query('SELECT id FROM fivem_servers WHERE server_key=? AND is_enabled=1',[key]);if(!s)content.fail('Server not configured or disabled.',404);}
+async function linked(license,key){await server(key);if(typeof license!=='string'||!license)content.fail('Linked player license is required.');const [[u]]=await db.query('SELECT id,is_active FROM users WHERE fivem_license=?',[license]);if(!u)content.fail('Account not linked.',404);if(!u.is_active)content.fail('Account is inactive.',403);return u;}
+async function news(key,query){await server(key);return {ok:true,...await content.news(query.q||'',query.category||'')};}
+async function post(key,postId){await server(key);const p=await content.post(postId);return {ok:true,post:{id:p.id,title:p.title,category:p.category,tags:p.tags,summary:p.summary,body:p.body,published_at:p.published_at,updated_at:p.updated_at}};}
+async function rules(key,query){await server(key);return {ok:true,...await content.rules(query.q||'')};}
+async function tickets(license,key,ticketId){const user=await linked(license,key);if(!ticketId)return {ok:true,tickets:(await support.list(user.id)).tickets};const data=await support.thread(user.id,ticketId,true);return {ok:true,ticket:{id:data.ticket.id,subject:data.ticket.subject,category:data.ticket.category,status:data.ticket.status,created_at:data.ticket.created_at,updated_at:data.ticket.updated_at},messages:data.messages};}
+module.exports={news,post,rules,tickets};
