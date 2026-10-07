@@ -10,6 +10,8 @@ message({type:'clockHistory',data:{ok:true,active:{id:1,duration_seconds:3599},s
 message({type:'profile',data:{ok:true,player:{id:1,can_use_hud:true,callsign:'101',display_name:'Member',department_name:'Patrol'}}});
 message({type:'tabletData',data:{branding:{name:'CommunityHub',features:{hud:true,applications:false}}}});
 assert(!node('miniHud').classList.contains('hidden'));assert.equal(node('dutyElapsed').textContent,'00:59:59');
+message({type:'tabletData',data:{branding:{name:'CommunityHub',features:{hud:true,hud_logo:false,hud_name:false,hud_postals:false}}}});assert(node('hudLogo').classList.contains('hidden'));assert(node('hudName').classList.contains('hidden'));assert(node('hudBrand').classList.contains('hidden'));assert(node('hudPostal').classList.contains('hidden'));assert(!node('miniHud').classList.contains('hidden'));
+message({type:'tabletData',data:{branding:{name:'CommunityHub',features:{hud:true,hud_logo:true,hud_name:true,hud_postals:true}}}});assert(!node('hudBrand').classList.contains('hidden'));assert(!node('hudPostal').classList.contains('hidden'));
 now=1000;intervals.forEach(fn=>fn());assert.equal(node('dutyElapsed').textContent,'01:00:00');assert(node('hudDuty').textContent.includes('01:00:00'));
 message({type:'visible',visible:true});assert(node('miniHud').classList.contains('hidden'));
 message({type:'hud',enabled:true});assert(node('notice').textContent.includes('Close the tablet'));
