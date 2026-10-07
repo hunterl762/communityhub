@@ -131,6 +131,9 @@ app.get("/", async (req, res) => {
 	} catch {}
 	res.render("index", { stats });
 });
+app.use(require("./src/routes/publicAccess"));
+const {requireCommunityMember}=require("./src/middleware/communityMember");
+app.use(["/admin","/community/manage","/command-center","/staff-activity","/loa-management","/documents","/training","/lms","/calendar","/personnel"],requireCommunityMember);
 app.use(require("./src/routes/publicWebsite"));
 app.use(require("./src/routes/branding"));
 app.use("/admin/appearance", require("./src/routes/appearance"));

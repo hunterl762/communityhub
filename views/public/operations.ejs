@@ -1,0 +1,5 @@
+<%- include('../partials/header') %>
+<section class="page-head"><div><div class="eyebrow">COMMUNITY OPERATIONS</div><h1>Community overview</h1><p>Live availability and player counts across our FiveM servers.</p></div><a class="btn secondary" href="/fivem/status">Server history</a></section>
+<section class="grid two"><% servers.forEach(s=>{ %><article class="panel"><span class="status-badge <%= Number(s.live)?'online':'offline' %>"><%= Number(s.live)?'Online':'Offline' %></span><h2><%= s.name %></h2><p><%= s.current_players %> / <%= s.max_players %> players</p></article><% }) %><% if(!servers.length){ %><p class="muted">No public servers are available yet.</p><% } %></section>
+<section class="public-cta"><div><h2>Explore the community</h2><p>Meet our members, read the latest updates and find an open application.</p></div><div class="actions"><a class="btn secondary" href="/personnel">Member directory</a><a class="btn" href="/applications">Recruitment</a></div></section>
+<%- include('../partials/footer') %>

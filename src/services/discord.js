@@ -1,6 +1,6 @@
 const axios=require('axios');
 function config(){if(!process.env.DISCORD_GUILD_ID||!process.env.DISCORD_BOT_TOKEN)throw new Error('DISCORD_GUILD_ID and DISCORD_BOT_TOKEN are required.');return{guild:process.env.DISCORD_GUILD_ID,headers:{Authorization:`Bot ${process.env.DISCORD_BOT_TOKEN}`}};}
-async function isGuildMember(discordId){const c=config();try{await axios.get(`https://discord.com/api/v10/guilds/${c.guild}/members/${discordId}`,{headers:c.headers});return true;}catch(e){if(e.response?.status===404)return false;throw e;}}
+async function isGuildMember(discordId){const c=config();try{await axios.get(`https://discord.com/api/v10/guilds/${c.guild}/members/${discordId}`,{headers:c.headers,timeout:10000});return true;}catch(e){if(e.response?.status===404)return false;throw e;}}
 async function getGuildMember(discordId){const c=config();const {data}=await axios.get(`https://discord.com/api/v10/guilds/${c.guild}/members/${discordId}`,{headers:c.headers});return data;}
 async function addGuildRole(discordId,roleId){if(!roleId)return;const c=config();await axios.put(`https://discord.com/api/v10/guilds/${c.guild}/members/${discordId}/roles/${roleId}`,null,{headers:c.headers});}
 async function removeGuildRole(discordId,roleId){if(!roleId)return;const c=config();await axios.delete(`https://discord.com/api/v10/guilds/${c.guild}/members/${discordId}/roles/${roleId}`,{headers:c.headers});}

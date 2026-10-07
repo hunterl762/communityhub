@@ -1,0 +1,4 @@
+<%- include('../partials/header') %>
+<section class="page-head"><div><div class="eyebrow">RECRUITMENT</div><h1><%= form.title %></h1><p><%= form.description||'Apply to join our community.' %></p></div></section>
+<section class="panel"><h2>Application questions</h2><% questions.forEach(q=>{ %><article class="community-entry"><h3><%= q.label %><%= q.is_required?' *':'' %></h3><p class="muted"><%= q.help_text||'' %></p></article><% }) %><p class="muted">Sign in with Discord and join the community Discord to submit your application.</p><a class="btn" href="/auth/login">Sign in with Discord</a></section>
+<%- include('../partials/footer') %>
