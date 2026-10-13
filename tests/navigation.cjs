@@ -10,7 +10,7 @@ for(const role of [null,...roles]){
  const html=render('views/partials/header.ejs',{user});
  assert.equal(html.includes('href="/admin/fivem"'),['admin','management','owner'].includes(role));
  assert.equal(html.includes('href="/admin/users"'),['admin','owner'].includes(role));
- assert.equal(html.includes('href="/admin/management/notifications"'),auth.STAFF_ROLES.includes(role));
+ assert.equal(html.includes('href="/notifications"'),!!role);
  assert.equal(html.includes('href="/admin"'),auth.REVIEW_ROLES.includes(role));assert.equal(html.includes('href="/admin/applications"'),auth.REVIEW_ROLES.includes(role));assert.equal(html.includes('href="/admin/reports"'),auth.REVIEW_ROLES.includes(role));assert.equal(html.includes('href="/admin/tickets"'),['staff','admin','management','owner'].includes(role));
  assert.equal(html.includes('action="/auth/logout"'),!!role);
  if(role)assert(html.includes('Test &lt;User&gt;'));

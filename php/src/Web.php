@@ -4,6 +4,8 @@ namespace CommunityHub;
 final class Web {
  public static function handle(string $method,string $path,array $d):void {
   if($method==='POST'){Auth::requireUser();Auth::csrf($d);App::limit('web-write',(string)Auth::user()['id'],100);}
+  if(str_starts_with($path,'/notifications')){Notifications::web($method,$path,$d);return;}
+  if($path==='/admin/management/notifications'){Auth::requireUser(true);App::redirect('/notifications');}
   if($path==='/auth/logout'&&$method==='POST'){$_SESSION=[];session_destroy();App::redirect('/');}
   if(in_array($path,['/auth/discord','/auth/register'],true))Auth::begin();
   if($path==='/auth/discord/callback'&&$method==='GET')Auth::callback($_GET);

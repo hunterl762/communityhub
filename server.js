@@ -133,7 +133,7 @@ app.get("/", async (req, res) => {
 });
 app.use(require("./src/routes/publicAccess"));
 const {requireCommunityMember}=require("./src/middleware/communityMember");
-app.use(["/admin","/community/manage","/command-center","/staff-activity","/loa-management","/documents","/training","/lms","/calendar","/personnel"],requireCommunityMember);
+app.use(["/notifications","/admin","/community/manage","/command-center","/staff-activity","/loa-management","/documents","/training","/lms","/calendar","/personnel"],requireCommunityMember);
 app.use(require("./src/routes/publicWebsite"));
 app.use(require("./src/routes/branding"));
 app.use("/admin/appearance", require("./src/routes/appearance"));
@@ -141,6 +141,7 @@ app.use("/overview", require("./src/routes/overview"));
 app.use("/command-center/readiness", require("./src/routes/readiness"));
 app.use("/command-center", require("./src/routes/commandCenter"));
 app.use("/auth", require("./src/routes/auth"));
+app.use("/notifications", require("./src/routes/notifications"));
 app.use("/account", require("./src/routes/account"));
 app.use("/applications", require("./src/routes/applications"));
 app.use("/reports", require("./src/routes/reports"));
