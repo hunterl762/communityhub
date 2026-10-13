@@ -63,6 +63,7 @@
     busy = false; $('homeRefresh').disabled = false;
     $('homeUpdated').textContent = 'Checked ' + new Date().toLocaleTimeString(); renderCommunity();
   }
+  window.addEventListener('communityhub:tickets', ({detail}) => { if (visible && identity && detail?.ok && Array.isArray(detail.tickets)) support(detail); });
   $('homeRefresh').onclick = () => { send('phoneReady'); refresh(); };
   document.addEventListener('click', event => {
     const shortcut = event.target.closest('#home [data-page]');
