@@ -26,8 +26,6 @@ vm.runInContext(fs.readFileSync(require('path').join(__dirname,'../fivem/communi
   assert.equal(node('chatMessage').value,'Retain chat draft');assert.equal(node('chatSend').disabled,false);
   onMessage({data:{type:'chatData',data:{ok:true,wasSend:true,sent:true,messages:[]}}});
   assert.equal(node('chatMessage').value,'');
-  onMessage({data:{type:'clockHistory',data:{ok:true,sessions:[{status:'active',duration_seconds:60,clocked_in_at:new Date(),server_name:'Primary'}]}}});
-  assert.equal(node('clockIn').disabled,true);assert.equal(node('clockOut').disabled,false);
   onMessage({data:{type:'profile',data:{ok:true,player:{role:'member'}}}});
   request=null;node('chatMessage').value='Forbidden';await node('chatSend').onclick();assert.equal(request,null);
   fail=true;await vm.runInContext("send('link',{code:'123456'})",context);

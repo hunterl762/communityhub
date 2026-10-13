@@ -7,7 +7,7 @@
   const dock = document.createElement('nav');
   dock.className = 'phone-dock';
   dock.setAttribute('aria-label', 'Phone navigation');
-  for (const [page, label] of [['home', 'Overview'], ['patrol', 'Duty'], ['support', 'Support'], ['more', 'More']]) {
+  for (const [page, label] of [['home', 'Overview'], ['learning', 'Training'], ['support', 'Support'], ['more', 'More']]) {
     const button = document.createElement('button');
     button.type = 'button';
     button.dataset.phonePage = page;
@@ -26,7 +26,7 @@
   function syncNavigation() {
     const active = menu.querySelector('button.active')?.dataset.page || 'home';
     dock.querySelectorAll('button').forEach(button => {
-      const selected = button.dataset.phonePage === active || (button === more && !['home', 'patrol', 'support'].includes(active));
+      const selected = button.dataset.phonePage === active || (button === more && !['home', 'learning', 'support'].includes(active));
       button.classList.toggle('active', selected);
       if (selected) button.setAttribute('aria-current', 'page'); else button.removeAttribute('aria-current');
     });

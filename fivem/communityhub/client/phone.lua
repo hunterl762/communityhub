@@ -10,7 +10,7 @@ local function phoneMessage(message)
     pcall(function() exports[phoneResource]:SendCustomAppMessage(identifier, message) end)
 end
 function CommunityHubSendUI(message)
-    if message.type == 'profile' or message.type == 'tabletData' or message.type == 'clockHistory' or message.type == 'postal' or message.type == 'gameClock' then cached[message.type] = message end
+    if message.type == 'profile' or message.type == 'tabletData' or message.type == 'postal' or message.type == 'gameClock' then cached[message.type] = message end
     phoneMessage(message)
 end
 local function register()
@@ -18,7 +18,7 @@ local function register()
     local ok, success, reason = pcall(function()
         return exports[phoneResource]:AddCustomApp({
             identifier = identifier, name = settings.Name or 'Community Hub',
-            description = 'Community news, duty, training, reports and support', developer = 'CommunityHub',
+            description = 'Community news, training, reports and support', developer = 'CommunityHub',
             defaultApp = settings.DefaultApp ~= false, size = 200, price = 0,
             ui = GetCurrentResourceName() .. '/html/phone.html',
             icon = 'https://cfx-nui-' .. GetCurrentResourceName() .. '/html/phone-icon.svg',

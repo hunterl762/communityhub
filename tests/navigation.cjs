@@ -21,7 +21,7 @@ for(const role of [null,...roles]){
  }
  if(auth.REVIEW_ROLES.includes(role)){
   const dashboard=render('views/admin/index.ejs',{user,canManageUsers:auth.USER_MANAGER_ROLES.includes(role),isOwner:role==='owner',appStats:{pending:2},reportStats:{},applications:[],reports:[]});
-  assert(dashboard.includes('<section class="panel"><h2>Application Reviews'));
+  assert(dashboard.includes('<section class="panel"><h2>Application Reviews'));assert(!/Time clock log|data-patrol-log|Clocked in/.test(dashboard));
   assert.equal(dashboard.includes('id="community-settings"'),role==='owner');
   assert.equal((dashboard.match(/<section\b/g)||[]).length,(dashboard.match(/<\/section>/g)||[]).length);
  }
@@ -29,7 +29,7 @@ for(const role of [null,...roles]){
 for(const serverCount of [0,2]){
  const data={user:{id:1,role:'admin'},stats:{patrols:4,patrol_minutes:120,unique_members:2},servers:Array.from({length:serverCount},(_,i)=>({id:i+1,name:'Test <Server>',server_key:'primary',framework:i?'qbcore':'standalone',max_players:64,is_enabled:i?0:1,current_players:3,last_heartbeat_at:i?null:new Date()})),keys:[{id:1,name:'Test <Key>',key_prefix:'ch_fivem_123',server_name:null,is_active:1,created_at:new Date(),last_used_at:null},{id:2,name:'Revoked',key_prefix:'ch_fivem_456',is_active:0,created_at:new Date()}],announcements:[{title:'Hello <MDT>',message:'Test',priority:'info',is_active:1}],newApiKey:'ch_fivem_test'};
  const html=render('views/admin/fivem.ejs',data);
- assert(html.includes('ch_fivem_test'));assert(html.includes('Test &lt;Key&gt;'));assert(html.includes('Never'));
+ assert(!/Patrol hours|Patrols ·|duty HUD/.test(html));assert(html.includes('ch_fivem_test'));assert(html.includes('Test &lt;Key&gt;'));assert(html.includes('Never'));
  assert.equal((html.match(/action="\/admin\/fivem\/servers\//g)||[]).length,serverCount);
  if(serverCount)assert(html.includes('selected>QBCore'));
  assert.equal((html.match(/<section\b/g)||[]).length,(html.match(/<\/section>/g)||[]).length);
