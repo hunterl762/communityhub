@@ -1,62 +1,101 @@
 html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--bg)!important}
 body.phone-app{display:block!important}
-#tablet.v3-shell{position:relative!important;inset:auto!important;transform:none!important;width:100%!important;height:100%!important;max-width:none;max-height:none;display:grid;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:calc(3.25rem + max(2rem,env(safe-area-inset-top))) minmax(0,1fr) calc(3.5rem + max(.85rem,env(safe-area-inset-bottom)))!important;border:0;border-radius:0;box-shadow:none;font-size:.875rem}
-#tablet.v3-shell .tablet-header{grid-column:1;grid-row:1;min-height:0;padding:max(2rem,env(safe-area-inset-top)) .85rem 0;gap:.4rem;background:var(--panel)}
-#tablet.v3-shell .tablet-brand{flex:1;min-width:0;gap:.5rem}
-#tablet.v3-shell .tablet-brand img{width:30px;height:30px;flex:none;object-fit:contain}
-#tablet.v3-shell .tablet-brand>div{min-width:0}
-#tablet.v3-shell .tablet-brand h1{font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;line-height:1.3}
-#tablet.v3-shell .tablet-brand small,#tablet.v3-shell .tablet-clock,#close,#hudToggle,#tabletTheme,#miniHud{display:none!important}
-#tablet.v3-shell .connection{font-size:.6rem;padding:.3rem .4rem;min-height:1.8rem;white-space:nowrap;flex:none}
-#tablet.v3-shell main{grid-column:1;grid-row:2;padding:1rem .85rem;overflow:auto;min-width:0;min-height:0;scrollbar-width:none}
-#tablet.v3-shell main::-webkit-scrollbar{display:none}
-#tablet.v3-shell h2{font-size:1.35rem;line-height:1.2;margin-bottom:.65rem}
-#tablet.v3-shell h3{font-size:1rem}
-#tablet.v3-shell .section-head{display:block;margin-bottom:1rem}
-#tablet.v3-shell .eyebrow{font-size:.6rem;letter-spacing:.1em}
-#tablet.v3-shell .cards,#tablet.v3-shell .schedule-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
-#tablet.v3-shell .cards article{padding:.75rem;min-height:0}
-#tablet.v3-shell .cards strong{font-size:1rem;overflow-wrap:anywhere}
-#tablet.v3-shell .home-shortcuts{display:grid;grid-template-columns:1fr;gap:.5rem;margin-top:1rem}
-#tablet.v3-shell .home-shortcuts button{min-height:3.5rem;padding:.75rem 1rem;text-align:left;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:.2rem}
-#tablet.v3-shell .home-shortcuts span{font-size:.8rem}
-#tablet.v3-shell .home-shortcuts strong{font-size:.7rem;font-weight:400}
-#tablet.v3-shell .terminal-note{display:none}
-#tablet.v3-shell input,#tablet.v3-shell select,#tablet.v3-shell textarea{max-width:100%;min-width:0;box-sizing:border-box;font-size:.875rem}
-#tablet.v3-shell button{font-size:.8rem;min-height:2.5rem}
-#tablet.v3-shell .record,#tablet.v3-shell .link-panel{padding:.85rem;overflow-wrap:anywhere;border:1px solid var(--line);border-radius:8px}
-#tablet.v3-shell .record{margin-bottom:.5rem}
-#tablet.v3-shell .learning-toolbar,#tablet.v3-shell .hub-toolbar{flex-wrap:wrap;gap:.5rem}
-#tablet.v3-shell .tablet-tabs{display:none;position:absolute;z-index:20;top:calc(3.25rem + max(2rem,env(safe-area-inset-top)));bottom:calc(3.5rem + max(.85rem,env(safe-area-inset-bottom)));left:0;right:0;grid-column:auto;grid-row:auto;padding:1rem .85rem;overflow-y:auto;overflow-x:hidden;border:0;background:var(--bg);scrollbar-width:none}
-#tablet.v3-shell.phone-menu-open .tablet-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:.5rem}
-#tablet.v3-shell .tablet-tabs button{width:100%;min-width:0;min-height:3.5rem;padding:.6rem;display:flex;flex-direction:row;justify-content:flex-start;align-items:center;gap:.5rem;border:1px solid var(--line);border-radius:8px;font-size:.75rem}
-#tablet.v3-shell .tablet-tabs button.hidden{display:none!important}
-#tablet.v3-shell .tablet-tabs button span{display:inline!important;white-space:normal}
-#tablet.v3-shell .tablet-tabs .tab-icon{width:1rem;height:1rem;flex:none}
-#tablet.v3-shell .phone-dock{grid-column:1;grid-row:3;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.2rem;padding:.4rem .5rem max(.85rem,env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--panel);z-index:21}
-#tablet.v3-shell .phone-dock button{padding:.4rem .1rem;border:0;background:transparent;color:var(--muted);border-radius:6px;font-size:.7rem;min-width:0;min-height:2.5rem}
-#tablet.v3-shell .phone-dock button.active{background:var(--panel-hover,var(--bg));color:var(--text);box-shadow:inset 0 -2px var(--accent)}
-#tablet.v3-shell .phone-dock button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+body.phone-app #tablet.v3-shell{position:relative!important;inset:auto!important;transform:none!important;width:100%!important;height:100%!important;max-width:none;max-height:none;display:grid;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:calc(3.25rem + max(2rem,env(safe-area-inset-top))) minmax(0,1fr) calc(3.5rem + max(.85rem,env(safe-area-inset-bottom)))!important;border:0;border-radius:0;box-shadow:none;font-size:.875rem}
+body.phone-app #tablet.v3-shell .tablet-header{grid-column:1;grid-row:1;min-height:0;padding:max(2rem,env(safe-area-inset-top)) .85rem 0;gap:.4rem;background:var(--panel)}
+body.phone-app #tablet.v3-shell .tablet-brand{flex:1;min-width:0;gap:.5rem}
+body.phone-app #tablet.v3-shell .tablet-brand img{width:30px;height:30px;flex:none;object-fit:contain}
+body.phone-app #tablet.v3-shell .tablet-brand>div{min-width:0}
+body.phone-app #tablet.v3-shell .tablet-brand h1{font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;line-height:1.3}
+body.phone-app #tablet.v3-shell .tablet-brand small,body.phone-app #tablet.v3-shell .tablet-clock,#close,#hudToggle,#tabletTheme,#miniHud{display:none!important}
+body.phone-app #tablet.v3-shell .connection{font-size:.6rem;padding:.3rem .4rem;min-height:1.8rem;white-space:nowrap;flex:none}
+body.phone-app #tablet.v3-shell main{grid-column:1;grid-row:2;padding:1rem .85rem;overflow:auto;min-width:0;min-height:0;scrollbar-width:none}
+body.phone-app #tablet.v3-shell main::-webkit-scrollbar{display:none}
+body.phone-app #tablet.v3-shell h2{font-size:1.35rem;line-height:1.2;margin-bottom:.65rem}
+body.phone-app #tablet.v3-shell h3{font-size:1rem}
+body.phone-app #tablet.v3-shell .section-head{display:block;margin-bottom:1rem}
+body.phone-app #tablet.v3-shell .eyebrow{font-size:.6rem;letter-spacing:.1em}
+body.phone-app #tablet.v3-shell .cards,body.phone-app #tablet.v3-shell .schedule-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
+body.phone-app #tablet.v3-shell .cards article{padding:.75rem;min-height:0}
+body.phone-app #tablet.v3-shell .cards strong{font-size:1rem;overflow-wrap:anywhere}
+body.phone-app #tablet.v3-shell .home-shortcuts{display:grid;grid-template-columns:1fr;gap:.5rem;margin-top:1rem}
+body.phone-app #tablet.v3-shell .home-shortcuts button{min-height:3.5rem;padding:.75rem 1rem;text-align:left;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:.2rem}
+body.phone-app #tablet.v3-shell .home-shortcuts span{font-size:.8rem}
+body.phone-app #tablet.v3-shell .home-shortcuts strong{font-size:.7rem;font-weight:400}
+body.phone-app #tablet.v3-shell .terminal-note{display:none}
+body.phone-app #tablet.v3-shell input,body.phone-app #tablet.v3-shell select,body.phone-app #tablet.v3-shell textarea{max-width:100%;min-width:0;box-sizing:border-box;font-size:.875rem}
+body.phone-app #tablet.v3-shell button{font-size:.8rem;min-height:2.5rem}
+body.phone-app #tablet.v3-shell .record,body.phone-app #tablet.v3-shell .link-panel{padding:.85rem;overflow-wrap:anywhere;border:1px solid var(--line);border-radius:8px}
+body.phone-app #tablet.v3-shell .record{margin-bottom:.5rem}
+body.phone-app #tablet.v3-shell .learning-toolbar,body.phone-app #tablet.v3-shell .hub-toolbar{flex-wrap:wrap;gap:.5rem}
+body.phone-app #tablet.v3-shell .tablet-tabs{display:none;position:absolute;z-index:20;top:calc(3.25rem + max(2rem,env(safe-area-inset-top)));bottom:calc(3.5rem + max(.85rem,env(safe-area-inset-bottom)));left:0;right:0;grid-column:auto;grid-row:auto;padding:1rem .85rem;overflow-y:auto;overflow-x:hidden;border:0;background:var(--bg);scrollbar-width:none}
+body.phone-app #tablet.v3-shell.phone-menu-open .tablet-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:.5rem}
+body.phone-app #tablet.v3-shell .tablet-tabs button{width:100%;min-width:0;min-height:3.5rem;padding:.6rem;display:flex;flex-direction:row;justify-content:flex-start;align-items:center;gap:.5rem;border:1px solid var(--line);border-radius:8px;font-size:.75rem}
+body.phone-app #tablet.v3-shell .tablet-tabs button.hidden{display:none!important}
+body.phone-app #tablet.v3-shell .tablet-tabs button span{display:inline!important;white-space:normal}
+body.phone-app #tablet.v3-shell .tablet-tabs .tab-icon{width:1rem;height:1rem;flex:none}
+body.phone-app #tablet.v3-shell .phone-dock{grid-column:1;grid-row:3;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.2rem;padding:.4rem .5rem max(.85rem,env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--panel);z-index:21}
+body.phone-app #tablet.v3-shell .phone-dock button{padding:.4rem .1rem;border:0;background:transparent;color:var(--muted);border-radius:6px;font-size:.7rem;min-width:0;min-height:2.5rem}
+body.phone-app #tablet.v3-shell .phone-dock button.active{background:var(--panel-hover,var(--bg));color:var(--text);box-shadow:inset 0 -2px var(--accent)}
+body.phone-app #tablet.v3-shell .phone-dock button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 #notice{position:sticky;bottom:0;max-width:100%;box-sizing:border-box}
 #accountLink .link-steps{padding-left:1.25rem;color:var(--muted)}
 #accountLink .link-steps li{padding:.4rem 0}
 #accountLinkForm{display:grid;gap:.65rem}
 #linkCode{font-size:1.5rem!important;letter-spacing:.3em;text-align:center;padding:.8rem}
 #linkStatus{min-height:2.5rem;overflow-wrap:anywhere}
-#tablet.v3-shell .cards{display:grid;border:0;margin-top:1rem}
-#tablet.v3-shell .cards article,#tablet.v3-shell .cards article:last-child,#tablet.v3-shell .cards article:nth-child(-n+2){border:1px solid var(--line);border-radius:8px}
-#tablet.v3-shell .cards b{font-size:.9rem;overflow-wrap:anywhere}
-#tablet.v3-shell .brand-mark,#tablet.v3-shell .brand-mark.brand-logo{width:30px;height:30px;flex:none}
-#tablet.v3-shell .personal-home{display:grid;gap:.65rem;margin-top:.75rem}
-#tablet.v3-shell .personal-home .record{margin:0;padding:1rem}
-#tablet.v3-shell .personal-home h3{margin:0 0 .65rem}
-#tablet.v3-shell .personal-home strong,#tablet.v3-shell .personal-home small{display:block;margin:.4rem 0;overflow-wrap:anywhere}
-#tablet.v3-shell .personal-home p{font-size:.8rem;line-height:1.5;margin:.5rem 0}
-#tablet.v3-shell .personal-home progress{width:100%;height:.3rem;margin:.4rem 0 .7rem}
-#tablet.v3-shell .personal-home button{margin-top:.65rem;width:100%}
-#tablet.v3-shell #homeUpdated{font-size:.65rem;margin:.6rem 0}
-#tablet.v3-shell #homeGreeting{overflow-wrap:anywhere}
-#tablet.v3-shell .personal-home button span{font-weight:700}
-#tablet.v3-shell .phone-badge:not([hidden]){display:inline-flex;align-items:center;justify-content:center;min-width:1rem;height:1rem;padding:0 .2rem;margin-left:.15rem;border-radius:1rem;background:var(--accent);color:white;font-size:.6rem}
-#tablet.v3-shell .personal-home button span{display:inline;margin:0}
-#tablet.v3-shell .personal-home progress{accent-color:var(--accent)}
+body.phone-app #tablet.v3-shell .cards{display:grid;border:0;margin-top:1rem}
+body.phone-app #tablet.v3-shell .cards article,body.phone-app #tablet.v3-shell .cards article:last-child,body.phone-app #tablet.v3-shell .cards article:nth-child(-n+2){border:1px solid var(--line);border-radius:8px}
+body.phone-app #tablet.v3-shell .cards b{font-size:.9rem;overflow-wrap:anywhere}
+body.phone-app #tablet.v3-shell .brand-mark,body.phone-app #tablet.v3-shell .brand-mark.brand-logo{width:30px;height:30px;flex:none}
+body.phone-app #tablet.v3-shell .personal-home{display:grid;gap:.65rem;margin-top:.75rem}
+body.phone-app #tablet.v3-shell .personal-home .record{margin:0;padding:1rem}
+body.phone-app #tablet.v3-shell .personal-home h3{margin:0 0 .65rem}
+body.phone-app #tablet.v3-shell .personal-home strong,body.phone-app #tablet.v3-shell .personal-home small{display:block;margin:.4rem 0;overflow-wrap:anywhere}
+body.phone-app #tablet.v3-shell .personal-home p{font-size:.8rem;line-height:1.5;margin:.5rem 0}
+body.phone-app #tablet.v3-shell .personal-home progress{width:100%;height:.3rem;margin:.4rem 0 .7rem}
+body.phone-app #tablet.v3-shell .personal-home button{margin-top:.65rem;width:100%}
+body.phone-app #tablet.v3-shell #homeUpdated{font-size:.65rem;margin:.6rem 0}
+body.phone-app #tablet.v3-shell #homeGreeting{overflow-wrap:anywhere}
+body.phone-app #tablet.v3-shell .personal-home button span{font-weight:700}
+body.phone-app #tablet.v3-shell .phone-badge:not([hidden]){display:inline-flex;align-items:center;justify-content:center;min-width:1rem;height:1rem;padding:0 .2rem;margin-left:.15rem;border-radius:1rem;background:var(--accent);color:white;font-size:.6rem}
+body.phone-app #tablet.v3-shell .personal-home button span{display:inline;margin:0}
+body.phone-app #tablet.v3-shell .personal-home progress{accent-color:var(--accent)}
+/* Phone-specific finishing styles keep every page inside the same visual system. */
+body.phone-app #tablet.v3-shell{font-family:Arial,Helvetica,sans-serif;line-height:1.45}
+body.phone-app #tablet.v3-shell .tablet-header{border-bottom:1px solid var(--line)}
+body.phone-app #tablet.v3-shell .tablet-brand h1{font-size:.76rem;letter-spacing:0;font-weight:700}
+body.phone-app #tablet.v3-shell main{padding:.95rem .85rem 1.25rem}
+body.phone-app #tablet.v3-shell .section-head{padding-bottom:.8rem;margin-bottom:.85rem}
+body.phone-app #tablet.v3-shell h2{font-size:1.3rem;letter-spacing:-.035em}
+body.phone-app #tablet.v3-shell .section-description,body.phone-app #tablet.v3-shell .section-head p{font-size:.78rem;line-height:1.5}
+body.phone-app #tablet.v3-shell .record,body.phone-app #tablet.v3-shell .hub-entry,body.phone-app #tablet.v3-shell .learning-course,body.phone-app #tablet.v3-shell .hub-rule,body.phone-app #tablet.v3-shell #applicationForm fieldset{padding:.85rem;border:1px solid var(--line);border-radius:10px;background:var(--panel);margin:0 0 .65rem;box-shadow:none}
+body.phone-app #tablet.v3-shell .record span,body.phone-app #tablet.v3-shell .hub-entry small,body.phone-app #tablet.v3-shell .learning-course small{font-size:.72rem;line-height:1.5;color:var(--muted)}
+body.phone-app #tablet.v3-shell .hub-entry h3,body.phone-app #tablet.v3-shell .learning-course h4{font-size:.9rem;line-height:1.35;margin:0 0 .45rem}
+body.phone-app #tablet.v3-shell .hub-text,body.phone-app #tablet.v3-shell .learning-course p{font-size:.8rem;line-height:1.6;overflow-wrap:anywhere}
+body.phone-app #tablet.v3-shell .hub-ticket-row{display:grid;grid-template-columns:minmax(0,1fr);gap:.75rem;align-items:start}
+body.phone-app #tablet.v3-shell .hub-ticket-row button{width:100%;margin:0}
+body.phone-app #tablet.v3-shell input,body.phone-app #tablet.v3-shell select,body.phone-app #tablet.v3-shell textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:.7rem;background:var(--panel);color:var(--text);line-height:1.5}
+body.phone-app #tablet.v3-shell input[type=checkbox],body.phone-app #tablet.v3-shell input[type=radio]{width:auto}
+body.phone-app #tablet.v3-shell label{font-size:.75rem;line-height:1.45}
+body.phone-app #tablet.v3-shell button{border-radius:8px;min-height:2.65rem;line-height:1.3}
+body.phone-app #tablet.v3-shell .data-list{max-height:none;overflow:visible}
+body.phone-app #tablet.v3-shell .hub-conversation-actions{position:static;padding:0 0 .65rem;background:transparent}
+body.phone-app #tablet.v3-shell .hub-message{border-left:3px solid var(--line)}
+body.phone-app #tablet.v3-shell .hub-rule summary{font-size:.85rem;line-height:1.5;cursor:pointer}
+body.phone-app #tablet.v3-shell .learning-toolbar,body.phone-app #tablet.v3-shell .hub-toolbar{display:flex;gap:.5rem}
+body.phone-app #tablet.v3-shell .learning-toolbar button,body.phone-app #tablet.v3-shell .hub-toolbar button{flex:1;min-width:0}
+body.phone-app #tablet.v3-shell .personal-home .record{padding:.9rem}
+body.phone-app #tablet.v3-shell .personal-home h3{font-size:.95rem}
+body.phone-app #tablet.v3-shell .personal-home button{display:flex;align-items:center;justify-content:center;gap:.35rem}
+body.phone-app #tablet.v3-shell #homeRefresh{font-size:.7rem;min-height:2.2rem;padding:.45rem .7rem}
+body.phone-app #tablet.v3-shell.phone-menu-open .tablet-tabs{grid-template-columns:minmax(0,1fr);gap:.45rem;background:var(--bg)}
+body.phone-app #tablet.v3-shell .tablet-tabs button{min-height:3rem;padding:.7rem .85rem;justify-content:flex-start;background:var(--panel);font-size:.8rem;border-radius:9px}
+body.phone-app #tablet.v3-shell .tablet-tabs button.active{border-color:var(--accent);background:var(--accent-soft);box-shadow:none}
+body.phone-app #tablet.v3-shell .tablet-tabs button::after{content:'›';margin-left:auto;color:var(--muted);font-size:1.2rem}
+body.phone-app #tablet.v3-shell .tablet-tabs .tab-icon{width:1.15rem;height:1.15rem;flex-basis:1.15rem}
+body.phone-app #tablet.v3-shell .phone-dock{gap:.1rem;padding-top:.35rem}
+body.phone-app #tablet.v3-shell .phone-dock button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.2rem;min-height:2.6rem;font-size:.6rem;box-shadow:none;background:transparent}
+body.phone-app #tablet.v3-shell .phone-dock button svg{width:1.1rem;height:1.1rem;flex:none}
+body.phone-app #tablet.v3-shell .phone-dock button.active{color:var(--accent);background:var(--accent-soft);box-shadow:none}
+body.phone-app #tablet.v3-shell .phone-dock .phone-badge:not([hidden]){position:absolute;top:.05rem;right:15%;margin:0}
+body.phone-app #tablet.v3-shell :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
