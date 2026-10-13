@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace CommunityHub;
 
-final class HttpError extends \RuntimeException { public function __construct(string $message,public int $status=400){parent::__construct($message);} }
+final class HttpError extends \RuntimeException { public function __construct(string $message,public int $status=400,public int $retryAfter=0){parent::__construct($message);} }
 final class App {
     public static array $config=[];
     private static ?\PDO $connection=null;
@@ -40,7 +40,7 @@ final class App {
         curl_setopt_array($c,[CURLOPT_RETURNTRANSFER=>true,CURLOPT_TIMEOUT=>10,CURLOPT_CUSTOMREQUEST=>$method,CURLOPT_HTTPHEADER=>$headers]);
         if($body!==null){$headers[]='Content-Type: application/json';curl_setopt($c,CURLOPT_HTTPHEADER,$headers);curl_setopt($c,CURLOPT_POSTFIELDS,json_encode($body,JSON_THROW_ON_ERROR));}
         $raw=curl_exec($c);$status=curl_getinfo($c,CURLINFO_RESPONSE_CODE);if($raw===false)throw new HttpError('Discord is unavailable. Please try again shortly.',503);
-        $data=json_decode($raw,true);if($authorization&&str_starts_with($authorization,'Bearer ')&&in_array($status,[401,403],true))throw new HttpError('Sign in with Discord again to verify community membership.',401);if($status===404)throw new HttpError('Join the community Discord to access this section.',403);if($status<200||$status>=300)throw new HttpError('Discord verification is unavailable.',503);return is_array($data)?$data:[];
+        $data=json_decode($raw,true);if($status===429)throw new HttpError('Discord is rate limited. Please retry shortly.',429,max(1,(int)ceil((float)($data['retry_after']??10))));if($authorization&&str_starts_with($authorization,'Bearer ')&&in_array($status,[401,403],true))throw new HttpError('Sign in with Discord again to verify community membership.',401);if($status===404)throw new HttpError('Join the community Discord to access this section.',403);if($status<200||$status>=300)throw new HttpError('Discord verification is unavailable.',503);return is_array($data)?$data:[];
     }
     public static function membership(array $user):void{if(empty($user['is_active'])||empty($user['discord_id']))throw new HttpError('An active community Discord account is required.',403);if(!self::env('DISCORD_GUILD_ID'))throw new HttpError('Discord membership verification is not configured.',503);$oauth=DiscordMembership::member($user);if($oauth===true)return;if($oauth===false)throw new HttpError('Join the community Discord to access this section.',403);if(!self::env('DISCORD_BOT_TOKEN'))throw new HttpError('Discord membership verification is not configured.',503);static $verified=[];$identity=self::env('DISCORD_GUILD_ID').':'.$user['discord_id'];if(isset($verified[$identity]))return;self::discord('GET','guilds/'.self::env('DISCORD_GUILD_ID').'/members/'.$user['discord_id']);$verified[$identity]=true;}
 }
