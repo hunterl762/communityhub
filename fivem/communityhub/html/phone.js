@@ -1,0 +1,1 @@
+(() => {document.body.classList.add('phone-app');document.querySelector('.terminal-note').textContent='CommunityHub · Connected to your community dashboard';window.dispatchEvent(new MessageEvent('message',{data:{type:'visible',visible:true}}));})();

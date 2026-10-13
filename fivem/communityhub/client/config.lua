@@ -18,3 +18,6 @@ Config.Postals = {
     Fallback = true, -- Use our bundled postal map if the external resource is unavailable.
     RefreshMs = 2000
 }
+
+-- Optional LB Phone app. No API credentials belong in this client file.
+Config.LBPhone = { Enabled = true, Resource = 'lb-phone', Identifier = 'communityhub', Name = 'Community Hub', DefaultApp = true }
