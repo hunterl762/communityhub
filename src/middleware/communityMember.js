@@ -14,7 +14,7 @@ async function requireCommunityMember(req,res,next){
     if(!await membership(req))return res.status(403).render('message',{title:'Community members only',message:'Join the community Discord and sign in with that Discord account to access this section.'});
     next();
   }catch(e){
-    console.error('[Community membership]',e.code||e.response?.status||'Verification unavailable');
+    const status=e.response?.status;const reason=status===401?'Discord bot token rejected. Update DISCORD_BOT_TOKEN in the website .env and restart.':status===403?'Discord denied guild access. Check the bot is in DISCORD_GUILD_ID.':status===400?'Discord rejected the request. Check DISCORD_GUILD_ID and the account Discord ID.':e.message?.includes('DISCORD_GUILD_ID')?'Configure DISCORD_GUILD_ID and DISCORD_BOT_TOKEN in the website .env.':'Discord verification is temporarily unavailable.';console.error('[Community membership]',status?'HTTP '+status:(e.code||'Unavailable'),reason);
     res.status(503).render('message',{title:'Membership verification unavailable',message:'We could not verify your community Discord membership. Please try again shortly.'});
   }
 }
