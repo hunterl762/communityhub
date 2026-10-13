@@ -1,12 +1,5 @@
 Config = {}
--- Client-only tablet controls. Server credentials belong in ../config.lua.
-Config.TabletCommand = 'hub'
-Config.TabletKey = 'F6'
-
--- Optional HUD and emergency shortcuts. These contain no API credentials.
-Config.HudCommand = 'hubhud'
-Config.HudKey = 'F7'
-Config.HudEnabled = true -- Local default; saved /hubhud preference and website permissions still apply.
+-- Client-only LB Phone and postal settings. Server credentials belong in ../config.lua.
 
 -- Use 'badger' for your Badger Essentials postals.lua coordinates (no export needed).
 -- 'ocrp' selects the generic OCRP coordinate list instead.
@@ -19,5 +12,5 @@ Config.Postals = {
     RefreshMs = 2000
 }
 
--- Optional LB Phone app. No API credentials belong in this client file.
+-- LB Phone app. No API credentials belong in this client file.
 Config.LBPhone = { Enabled = true, Resource = 'lb-phone', Identifier = 'communityhub', Name = 'Community Hub', DefaultApp = true }

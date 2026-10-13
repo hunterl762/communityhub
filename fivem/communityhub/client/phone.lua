@@ -10,7 +10,6 @@ local function phoneMessage(message)
     pcall(function() exports[phoneResource]:SendCustomAppMessage(identifier, message) end)
 end
 function CommunityHubSendUI(message)
-    SendNUIMessage(message)
     if message.type == 'profile' or message.type == 'tabletData' or message.type == 'clockHistory' or message.type == 'postal' or message.type == 'gameClock' then cached[message.type] = message end
     phoneMessage(message)
 end
@@ -53,3 +52,5 @@ AddEventHandler('onClientResourceStop', function(resource)
     if resource == GetCurrentResourceName() and registered and available() then pcall(function() exports[phoneResource]:RemoveCustomApp(identifier) end) end
 end)
 CreateThread(function() while settings.Enabled == true and not registered do Wait(3000);register() end end)
+
+function CommunityHubPhoneIsOpen() return phoneOpen end

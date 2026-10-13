@@ -44,9 +44,9 @@ These checks use sample data and do not connect to MySQL or a FiveM server.
 
 After updating the website and resource, restart both. Set Config.ApiBase in fivem/communityhub/config.lua to the reachable website URL ending in /api/fivem. 127.0.0.1 works only when FiveM and the website run on the same machine (and network namespace). Use the final HTTPS URL rather than a redirect. Set Config.ApiKey to an active generated credential and Config.ServerKey to the key shown in Admin > FiveM Configuration.
 
-Run communityhub_test in the FiveM server console to check API reachability, authentication and server configuration. Failures now show actionable HTTP errors in the console and tablet instead of a generic Request failed. Database/schema failures return JSON with migration guidance. The API is mounted before website sessions and rate limiting; authenticated telemetry has a separate 10,000-request/15-minute budget per IP, while failed requests retain a 500-request budget.
+CommunityHub runs as an LB Phone app. API connection failures appear in the server log and app. There are no standalone tablet/HUD commands or key bindings.
 
-/link takes the six-digit code generated on the website FiveM page, not a player/account ID. Codes expire after five minutes. Command results also appear in chat when the tablet is closed.
+Generate a six-digit linking code on the website FiveM page, then enter it under Personnel in the CommunityHub LB Phone app. Codes expire after five minutes.
 
 The manifest now loads config.lua only on the server. Tablet command/key settings live in client/config.lua. If you used a real API key with the old shared-script manifest, revoke that key in Admin > FiveM and generate a replacement, since game clients could download the old config.
 
@@ -87,7 +87,7 @@ Theme C is the default visual system: a navy application sidebar, light-gray wor
 
 The member Overview refreshes SQL-derived enabled server availability/player counts, recent active units, upcoming training/events, own applications and current patrol every 15 seconds while visible. Staff review counts are queried only for existing reviewer roles. Table columns exclude FiveM licenses/API credentials. Empty states reflect actual data; no calls/maps/dispatch records are invented. The new Overview requires sign-in on both the initial and update routes.
 
-The redesign preserves the existing account, applications, reports, personnel, department, training, document, admin/FiveM and private chat actions. The tablet uses quick actions and bottom tabs with current-page indicators, labeled report/link/chat inputs and real account-link status. Its existing callbacks and role-checked chat remain intact. Dispatch/CAD workflows, real coordinate maps, panic alerts, the mini duty HUD, tablet applications and appearance administration are included with migration 010. Restart the website and communityhub resource after installing.
+The CommunityHub phone app shares the website account, applications, reports, personnel, training and private support features. Staff actions remain permission-controlled. CommunityHub is a CMS and LMS with FiveM integration.
 
 ### All file types and document removal (migration 009)
 

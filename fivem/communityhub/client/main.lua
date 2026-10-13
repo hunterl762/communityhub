@@ -1,58 +1,21 @@
-local open=false
-local function setTablet(state) open=state;SetNuiFocus(state,state);CommunityHubSendUI({type='visible',visible=state});if state then TriggerServerEvent('communityhub:getProfile') end end
-RegisterCommand(Config.TabletCommand,function() setTablet(not open) end,false)
-RegisterKeyMapping(Config.TabletCommand,'Open Community Hub','keyboard',Config.TabletKey)
-RegisterNUICallback('open',function(_,cb) setTablet(true);cb({ok=true}) end)
-RegisterNUICallback('close',function(_,cb) setTablet(false);cb({ok=true}) end)
+-- LB Phone owns opening, closing, focus and theme. There are no chat commands or key bindings.
 RegisterNUICallback('clockIn',function(_,cb) TriggerServerEvent('communityhub:clockIn');cb({ok=true}) end)
 RegisterNUICallback('clockOut',function(_,cb) TriggerServerEvent('communityhub:clockOut');cb({ok=true}) end)
 RegisterNUICallback('link',function(data,cb) TriggerServerEvent('communityhub:link',data.code);cb({ok=true}) end)
 RegisterNUICallback('report',function(data,cb) TriggerServerEvent('communityhub:report',data);cb({ok=true}) end)
 RegisterNetEvent('communityhub:profile',function(data) CommunityHubSendUI({type='profile',data=data});if not data.ok then CommunityHubSendUI({type='notice',data=data}) end end)
 RegisterNetEvent('communityhub:tabletData',function(data) if data.ok then CommunityHubSendUI({type='tabletData',data=data}) else CommunityHubSendUI({type='notice',data=data}) end end)
-RegisterNetEvent('communityhub:linkResult',function(data) CommunityHubSendUI({type='notice',data=data});if not open then TriggerEvent('chat:addMessage',{args={'Community Hub',data.ok and 'Account linked successfully.' or data.error or 'Link request failed'}}) end;if data.ok then TriggerServerEvent('communityhub:getProfile') end end)
+RegisterNetEvent('communityhub:linkResult',function(data) CommunityHubSendUI({type='notice',data=data});if data.ok then TriggerServerEvent('communityhub:getProfile') end end)
 RegisterNetEvent('communityhub:patrolResult',function(data) CommunityHubSendUI({type='notice',data=data});if data.ok then TriggerServerEvent('communityhub:getProfile') end end)
 RegisterNetEvent('communityhub:reportResult',function(data) CommunityHubSendUI({type='reportResult',data=data}) end)
--- Refresh SQL duty state and branding for the tablet and mini HUD.
-CreateThread(function()
-    while true do
-        Wait(30000)
-        TriggerServerEvent('communityhub:getProfile')
-    end
-end)
-
 RegisterNetEvent('communityhub:sampleClock',function(token) TriggerServerEvent('communityhub:clockSample',token,GetClockHours(),GetClockMinutes()) end)
 RegisterNetEvent('communityhub:clockHistory',function(data) CommunityHubSendUI({type='clockHistory',data=data}) end)
 RegisterNetEvent('communityhub:chatData',function(data) CommunityHubSendUI({type='chatData',data=data}) end)
 RegisterNUICallback('chatRead',function(_,cb) TriggerServerEvent('communityhub:adminChat');cb({ok=true}) end)
 RegisterNUICallback('chatSend',function(data,cb) TriggerServerEvent('communityhub:adminChat',data.message);cb({ok=true}) end)
-CreateThread(function() while true do Wait(1000);if open then CommunityHubSendUI({type='gameClock',hours=GetClockHours(),minutes=GetClockMinutes()}) end end end)
-
-local hudPreference=GetResourceKvpString('communityhub:hud')
-local hudEnabled=hudPreference=='on' or (hudPreference~='off' and Config.HudEnabled~=false)
-local theme=GetResourceKvpString('communityhub:theme') or 'dark'
-RegisterNUICallback('feature',function(data,cb)
-    TriggerServerEvent('communityhub:feature',data.kind,data.request_id,data.data or {});cb({ok=true})
-end)
-RegisterNetEvent('communityhub:featureReply',function(requestId,data)
-    CommunityHubSendUI({type='featureReply',request_id=requestId,data=data})
-end)
-local function toggleHud() hudEnabled=not hudEnabled;SetResourceKvp('communityhub:hud',hudEnabled and 'on' or 'off');CommunityHubSendUI({type='hud',enabled=hudEnabled}) end
-RegisterCommand(Config.HudCommand or 'hubhud',toggleHud,false)
-RegisterNUICallback('hudToggle',function(_,cb) toggleHud();cb({ok=true}) end)
-RegisterNUICallback('ready',function(_,cb) CommunityHubSendUI({type='hud',enabled=hudEnabled});CommunityHubSendUI({type='appearance',theme=theme});TriggerServerEvent('communityhub:getProfile');cb({ok=true}) end)
-RegisterNUICallback('appearance',function(data,cb) if data.theme=='light' or data.theme=='dark' then theme=data.theme;SetResourceKvp('communityhub:theme',theme) end;cb({ok=true}) end)
-RegisterKeyMapping(Config.HudCommand or 'hubhud','Toggle Community Hub duty HUD','keyboard',Config.HudKey or 'F7')
-CreateThread(function() Wait(2000);CommunityHubSendUI({type='hud',enabled=hudEnabled});CommunityHubSendUI({type='appearance',theme=theme});TriggerServerEvent('communityhub:getProfile') end)
-
--- Local nearest postal display; report records use server-derived coordinates.
-RegisterCommand('hubpostal',function()
-    local coords=GetEntityCoords(PlayerPedId())
-    CommunityHubPostals.current(coords.x,coords.y)
-    local status=CommunityHubPostals.status()
-    local message=('Postal: %s | Provider: %s'):format(status.code or 'unavailable',status.source)
-    if status.reason then message=message..' | '..status.reason end
-    print('[CommunityHub] '..message)
-    TriggerEvent('chat:addMessage',{args={'CommunityHub',message}})
-end,false)
-CreateThread(function() while true do Wait(math.max(500,tonumber((Config.Postals or {}).RefreshMs) or 2000));local coords=GetEntityCoords(PlayerPedId());CommunityHubSendUI({type='postal',code=CommunityHubPostals.current(coords.x,coords.y)}) end end)
+RegisterNUICallback('feature',function(data,cb) TriggerServerEvent('communityhub:feature',data.kind,data.request_id,data.data or {});cb({ok=true}) end)
+RegisterNetEvent('communityhub:featureReply',function(requestId,data) CommunityHubSendUI({type='featureReply',request_id=requestId,data=data}) end)
+CreateThread(function() while true do Wait(30000);if CommunityHubPhoneIsOpen() then TriggerServerEvent('communityhub:getProfile') end end end)
+CreateThread(function() while true do Wait(1000);if CommunityHubPhoneIsOpen() then CommunityHubSendUI({type='gameClock',hours=GetClockHours(),minutes=GetClockMinutes()}) end end end)
+-- Postal lookup remains available inside the app and in server-captured report locations.
+CreateThread(function() while true do Wait(math.max(500,tonumber((Config.Postals or {}).RefreshMs) or 2000));if CommunityHubPhoneIsOpen() then local coords=GetEntityCoords(PlayerPedId());CommunityHubSendUI({type='postal',code=CommunityHubPostals.current(coords.x,coords.y)}) end end end)

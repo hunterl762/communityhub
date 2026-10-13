@@ -22,16 +22,6 @@ RegisterNetEvent('communityhub:link',function(code) local src=source;local lic=l
 RegisterNetEvent('communityhub:clockIn',function() local src=source;local lic=licenseFor(src);if not lic then return TriggerClientEvent('communityhub:patrolResult',src,{ok=false,error='No FiveM license found'}) end;if lic then request('POST','/patrol/clock-in',{license=lic,server_key=Config.ServerKey},function(_,body) if licenseFor(src)~=lic then return end;TriggerClientEvent('communityhub:patrolResult',src,body) end) end end)
 RegisterNetEvent('communityhub:clockOut',function() local src=source;local lic=licenseFor(src);if not lic then return TriggerClientEvent('communityhub:patrolResult',src,{ok=false,error='No FiveM license found'}) end;if lic then request('POST','/patrol/clock-out',{license=lic,server_key=Config.ServerKey},function(_,body) if licenseFor(src)~=lic then return end;TriggerClientEvent('communityhub:patrolResult',src,body) end) end end)
 RegisterNetEvent('communityhub:report',function(data) local src=source;local lic=licenseFor(src);if not lic then return TriggerClientEvent('communityhub:reportResult',src,{ok=false,error='No FiveM license found'}) end;if lic then local x,y=unitPosition(src);request('POST','/report',{position_x=x,position_y=y,license=lic,server_key=Config.ServerKey,report_type=data.report_type,reported_name=data.reported_name,subject=data.subject,details=data.details},function(_,body) if licenseFor(src)~=lic then return end;TriggerClientEvent('communityhub:reportResult',src,body) end) end end)
-RegisterCommand('link',function(src,args) if src>0 then if args[1] then TriggerEvent('communityhub:serverLink',src,args[1]) else TriggerClientEvent('communityhub:linkResult',src,{ok=false,error='Use /link <6-digit code> from the website FiveM page; this is not your player ID.'}) end end end,false)
-AddEventHandler('communityhub:serverLink',function(src,code) local lic=licenseFor(src);if not lic then return TriggerClientEvent('communityhub:linkResult',src,{ok=false,error='No FiveM license found'}) end;if lic then request('POST','/link',{code=tostring(code),license=lic,player_name=GetPlayerName(src)},function(_,body) if licenseFor(src)~=lic then return end;TriggerClientEvent('communityhub:linkResult',src,body) end) end end)
--- Run from the server console; credentials remain server-side.
-RegisterCommand('communityhub_test',function(src)
-    if src ~= 0 then return end
-    request('GET','/status/'..Config.ServerKey,nil,function(_,body)
-        if body.ok then print('[Community Hub] API connection, authentication and server configuration OK.') end
-    end)
-end,true)
-
 RegisterNetEvent('communityhub:clockSample',function(token,hours,minutes)
     local src=source
     if not clockSample or src~=clockSample.player or token~=clockSample.token or GetGameTimer()>clockSample.expires then return end
