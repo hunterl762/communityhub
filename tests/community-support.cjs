@@ -15,7 +15,7 @@ async function run(){
   CREATE TABLE fivem_servers(id BIGINT UNSIGNED PRIMARY KEY,server_key VARCHAR(100),is_enabled BOOLEAN);
   INSERT INTO fivem_servers VALUES(1,'primary',1),(2,'disabled',0);
   CREATE TABLE fivem_api_keys(id BIGINT UNSIGNED PRIMARY KEY,server_id BIGINT UNSIGNED,key_hash VARCHAR(64),is_active BOOLEAN,last_used_at DATETIME);`);
-  const migration=fs.readFileSync(path.join(__dirname,'../sql/migrations/023_community_content_support.sql'),'utf8');await admin.query(migration);await admin.query(migration);
+  const migration=fs.readFileSync(path.join(__dirname,'../sql/migrations/023_community_content_support.sql'),'utf8');await admin.query(migration);await admin.query(migration);const triage=fs.readFileSync(path.join(__dirname,'../sql/migrations/028_support_ticket_triage.sql'),'utf8');await admin.query(triage);await admin.query(triage);
   const content=require('../src/services/communityContent'),support=require('../src/services/support'),game=require('../src/services/gameCommunity');
   const post={title:'Server update',category:'Changelog',summary:'What changed',tags:'training,update',body:'# Heading\n<script>alert(1)</script>\n[bad](javascript:alert(1))\n![image](https://example.com/tracker.png)',status:'draft'};
   await assert.rejects(content.save('news','new',1,post),/staff access/);

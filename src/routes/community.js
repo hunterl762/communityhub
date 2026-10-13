@@ -21,7 +21,8 @@ router.post('/community/manage/:kind/:id',requireAuth,requireStaff,csrf,throttle
 router.get('/support',requireAuth,action(async(req,res)=>res.render('community/support',{...await support.list(req.session.user.id,req.query.queue==='1',req.query.status||''),statuses:support.STATUSES})));
 router.get('/support/new',requireAuth,action(async(req,res)=>{await content.actor(req.session.user.id);res.render('community/ticket-new',{csrf:csrfToken(req)});}));
 router.post('/support',requireAuth,csrf,throttle,action(async(req,res)=>res.redirect('/support/tickets/'+await support.create(req.session.user.id,req.body))));
-router.get('/support/tickets/:id',requireAuth,action(async(req,res)=>res.render('community/ticket',{...await support.thread(req.session.user.id,req.params.id),statuses:support.STATUSES,csrf:csrfToken(req)})));
+router.get('/support/tickets/:id',requireAuth,action(async(req,res)=>res.render('community/ticket',{...await support.thread(req.session.user.id,req.params.id),statuses:support.STATUSES,priorities:support.PRIORITIES,csrf:csrfToken(req)})));
 router.post('/support/tickets/:id/reply',requireAuth,csrf,throttle,action(async(req,res)=>{await support.update(req.session.user.id,req.params.id,req.body);res.redirect('/support/tickets/'+req.params.id);}));
+router.post('/support/tickets/:id/triage',requireAuth,requireStaff,csrf,throttle,action(async(req,res)=>{await support.triage(req.session.user.id,req.params.id,req.body);res.redirect('/support/tickets/'+req.params.id);}));
 router.post('/support/tickets/:id/status',requireAuth,csrf,throttle,action(async(req,res)=>{await support.update(req.session.user.id,req.params.id,req.body,true);res.redirect('/support/tickets/'+req.params.id);}));
 module.exports=router;
