@@ -11,7 +11,7 @@ for(const role of [null,...roles]){
  assert.equal(html.includes('href="/admin/fivem"'),['admin','management','owner'].includes(role));
  assert.equal(html.includes('href="/admin/users"'),['admin','owner'].includes(role));
  assert.equal(html.includes('href="/admin/management/notifications"'),auth.STAFF_ROLES.includes(role));
- assert.equal(html.includes('href="/admin"'),auth.REVIEW_ROLES.includes(role));
+ assert.equal(html.includes('href="/admin"'),auth.REVIEW_ROLES.includes(role));assert.equal(html.includes('href="/admin/applications"'),auth.REVIEW_ROLES.includes(role));assert.equal(html.includes('href="/admin/reports"'),auth.REVIEW_ROLES.includes(role));
  assert.equal(html.includes('action="/auth/logout"'),!!role);
  if(role)assert(html.includes('Test &lt;User&gt;'));
  for(const allowed of [auth.REVIEW_ROLES,auth.STAFF_ROLES,['admin','management','owner'],auth.USER_MANAGER_ROLES]){
@@ -21,8 +21,8 @@ for(const role of [null,...roles]){
  }
  if(auth.REVIEW_ROLES.includes(role)){
   const dashboard=render('views/admin/index.ejs',{user,canManageUsers:auth.USER_MANAGER_ROLES.includes(role),isOwner:role==='owner',appStats:{pending:2},reportStats:{},applications:[],reports:[]});
-  assert(dashboard.includes('<section class="panel"><h2>Application Reviews'));assert(!/Time clock log|data-patrol-log|Clocked in/.test(dashboard));
-  assert.equal(dashboard.includes('id="community-settings"'),role==='owner');
+  assert(dashboard.includes('href="/admin/applications"'));assert(dashboard.includes('href="/admin/reports"'));assert(!dashboard.includes('data-review-apps'));assert(!dashboard.includes('data-review-reports'));assert(!/Time clock log|data-patrol-log|Clocked in/.test(dashboard));
+  assert.equal(dashboard.includes('id="community-settings"'),false);
   assert.equal((dashboard.match(/<section\b/g)||[]).length,(dashboard.match(/<\/section>/g)||[]).length);
  }
 }
@@ -33,6 +33,16 @@ for(const serverCount of [0,2]){
  assert.equal((html.match(/action="\/admin\/fivem\/servers\//g)||[]).length,serverCount);
  if(serverCount)assert(html.includes('selected>QBCore'));
  assert.equal((html.match(/<section\b/g)||[]).length,(html.match(/<\/section>/g)||[]).length);
+}
+for(const kind of ['applications','reports']){
+ for(const populated of [false,true]){
+  const rows=populated?[{id:8,status:'open',form_title:'Test <Application>',report_type:'Test <Report>',reported_name:'Player <Name>',display_name:'Member <Name>',reporter_name:'Reporter <Name>',submitted_at:new Date(),created_at:new Date()}]:[];
+  const html=render('views/admin/'+kind+'.ejs',{user:{id:1,role:'reviewer'},currentPath:'/admin/'+kind,[kind]:rows});
+  assert(html.includes('href="/admin/'+kind+'" aria-current="page"'));
+  assert(!html.includes(kind==='applications'?'data-review-reports':'data-review-apps'));
+  if(populated){assert(html.includes('href="/admin/'+kind+'/8"'));assert(!html.includes('Test <Application>'));assert(!html.includes('Test <Report>'));}
+  assert.equal((html.match(/<section\b/g)||[]).length,(html.match(/<\/section>/g)||[]).length);
+ }
 }
 function compile(dir){for(const item of fs.readdirSync(dir,{withFileTypes:true})){const p=path.join(dir,item.name);if(item.isDirectory())compile(p);else if(p.endsWith('.ejs'))ejs.compile(fs.readFileSync(p,'utf8'),{filename:p});}}
 compile(path.join(root,'views'));
