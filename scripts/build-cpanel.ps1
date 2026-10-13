@@ -20,6 +20,7 @@ foreach ($name in @('css','js','images','data')) {
 New-Item -ItemType Directory -Path (Join-Path $stageRoot 'sql') | Out-Null
 Copy-Item -LiteralPath (Join-Path $repoRoot 'sql/migrations/026_php_runtime.sql') -Destination (Join-Path $stageRoot 'sql/026_php_runtime.sql')
 Copy-Item -LiteralPath (Join-Path $repoRoot 'sql/migrations/027_discord_membership_oauth.sql') -Destination (Join-Path $stageRoot 'sql/027_discord_membership_oauth.sql')
+Copy-Item -LiteralPath (Join-Path $repoRoot 'sql/migrations/028_support_ticket_triage.sql') -Destination (Join-Path $stageRoot 'sql/028_support_ticket_triage.sql')
 New-Item -ItemType Directory -Path (Join-Path $stageRoot 'fivem') | Out-Null
 Copy-Item -LiteralPath (Join-Path $repoRoot 'fivem/communityhub') -Destination (Join-Path $stageRoot 'fivem') -Recurse
 # The source application, vendor and static assets are allowlisted; local secrets, sessions and tests are excluded.
