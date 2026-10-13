@@ -46,7 +46,7 @@ After updating the website and resource, restart both. Set Config.ApiBase in fiv
 
 CommunityHub runs as an LB Phone app. API connection failures appear in the server log and app. There are no standalone tablet/HUD commands or key bindings.
 
-Generate a six-digit linking code on the website FiveM page, then enter it under Personnel in the CommunityHub LB Phone app. Codes expire after five minutes.
+Generate a six-digit linking code on the website FiveM page, then enter it under Account in the CommunityHub LB Phone app. Codes expire after five minutes.
 
 The manifest now loads config.lua only on the server. Tablet command/key settings live in client/config.lua. If you used a real API key with the old shared-script manifest, revoke that key in Admin > FiveM and generate a replacement, since game clients could download the old config.
 

@@ -5,7 +5,7 @@ RegisterNUICallback('link',function(data,cb) TriggerServerEvent('communityhub:li
 RegisterNUICallback('report',function(data,cb) TriggerServerEvent('communityhub:report',data);cb({ok=true}) end)
 RegisterNetEvent('communityhub:profile',function(data) CommunityHubSendUI({type='profile',data=data});if not data.ok then CommunityHubSendUI({type='notice',data=data}) end end)
 RegisterNetEvent('communityhub:tabletData',function(data) if data.ok then CommunityHubSendUI({type='tabletData',data=data}) else CommunityHubSendUI({type='notice',data=data}) end end)
-RegisterNetEvent('communityhub:linkResult',function(data) CommunityHubSendUI({type='notice',data=data});if data.ok then TriggerServerEvent('communityhub:getProfile') end end)
+RegisterNetEvent('communityhub:linkResult',function(data) CommunityHubSendUI({type='linkResult',data=data});if data.ok then TriggerServerEvent('communityhub:getProfile') end end)
 RegisterNetEvent('communityhub:patrolResult',function(data) CommunityHubSendUI({type='notice',data=data});if data.ok then TriggerServerEvent('communityhub:getProfile') end end)
 RegisterNetEvent('communityhub:reportResult',function(data) CommunityHubSendUI({type='reportResult',data=data}) end)
 RegisterNetEvent('communityhub:sampleClock',function(token) TriggerServerEvent('communityhub:clockSample',token,GetClockHours(),GetClockMinutes()) end)
