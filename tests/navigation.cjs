@@ -8,7 +8,7 @@ const render=(p,data)=>ejs.render(fs.readFileSync(path.join(root,p),'utf8'),{...
 for(const role of [null,...roles]){
  const user=role?{id:1,role,display_name:'Test <User>'}:null;
  const html=render('views/partials/header.ejs',{user});
- assert.equal(html.includes('href="/admin/fivem"'),['admin','management','owner'].includes(role));
+ assert.equal(html.includes('href="/admin/fivem"'),['admin','management','owner'].includes(role));assert.equal(html.includes('href="/lms/admin/reminders"'),['admin','management','owner'].includes(role));
  assert.equal(html.includes('href="/admin/users"'),['admin','owner'].includes(role));
  assert.equal(html.includes('href="/notifications"'),!!role);
  assert.equal(html.includes('href="/admin"'),auth.REVIEW_ROLES.includes(role));assert.equal(html.includes('href="/admin/applications"'),auth.REVIEW_ROLES.includes(role));assert.equal(html.includes('href="/admin/reports"'),auth.REVIEW_ROLES.includes(role));assert.equal(html.includes('href="/admin/tickets"'),['staff','admin','management','owner'].includes(role));

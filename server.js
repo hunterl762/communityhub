@@ -148,6 +148,7 @@ app.use("/reports", require("./src/routes/reports"));
 app.use("/calendar", require("./src/routes/calendar"));
 app.use("/training", require("./src/routes/training"));
 app.use("/", require("./src/routes/community"));
+app.use("/lms/admin/reminders", require("./src/routes/learningReminders"));
 app.use("/lms/admin", require("./src/routes/lmsAdmin"));
 app.use("/lms", require("./src/routes/lms"));
 app.use("/documents", require("./src/routes/documents"));
@@ -183,6 +184,7 @@ async function start() {
 	try {
 		await initializeSessionStore();
 		require("./src/services/fivemStatus").startMonitor();
+		require("./src/services/learningReminders").start();
 		setInterval(
 			() =>
 				require("./src/services/loaLifecycle")
