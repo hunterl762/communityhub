@@ -14,7 +14,7 @@ Use cPanel's [MultiPHP Manager](https://docs.cpanel.net/cpanel/software/multiphp
 2. Extract `communityhub-cpanel.zip` into a private directory such as `/home/CPANEL_USER/communityhub-php`.
 3. Set the document root of `fivem-dashboard.kryndexabot.xyz` to `/home/CPANEL_USER/communityhub-php/public`. Only the **public** directory may be web-accessible. Keep `.env`, `src`, `vendor`, `bin` and `sql` outside the document root. If your provider fixes the document root, ask them to change it or relocate the public files and adjust the entry point's private application path; do not expose the entire application directory.
 4. Create a cPanel database and database user with permissions for that database. Import a complete backup of your **existing CommunityHub database** through phpMyAdmin. This preserves users, roles, certifications, reports, API key hashes and other records. The package is an upgrade for the existing V3 schema, not a fresh empty database installer.
-5. Run `sql/026_php_runtime.sql` in the imported database. This migration only creates the PHP session and rate-limit tables and is compatible with HeidiSQL/MariaDB 10.4. Your existing V3 schema must already include migrations through 025. Do not rerun unrelated migrations indiscriminately.
+5. Run `sql/026_php_runtime.sql` and `sql/027_discord_membership_oauth.sql` in the imported database. These migrations create the PHP session/rate-limit tables and the encrypted Discord authorization table and is compatible with HeidiSQL/MariaDB 10.4. Your existing V3 schema must already include migrations through 025. Do not rerun unrelated migrations indiscriminately.
 6. Copy `.env.example` to `.env` in the private application directory. Enter the cPanel-prefixed database name/user, database password and existing Discord client, guild and bot settings. Keep `.env` private, ideally mode 600. The required URLs are:
    - `BASE_URL=https://fivem-dashboard.kryndexabot.xyz`
    - `DISCORD_CALLBACK_URL=https://fivem-dashboard.kryndexabot.xyz/auth/discord/callback`
@@ -64,3 +64,5 @@ node php/tests/integration.cjs
 ```
 
 The preview and tests must run on loopback. Never configure `auto_prepend_file` on the production host. The cPanel package excludes the entire test directory and all test fixtures. The Lua transport regression test is `tests/fivem-http.lua`; other existing Node regression tests remain available for rollback compatibility.
+
+Membership is verified using the `guilds.members.read` permission granted at Discord sign-in. Configure a private random `DISCORD_TOKEN_SECRET` of at least 32 characters. If importing saved authorization from Node, use the same encryption key as that deployment (`DISCORD_TOKEN_SECRET`, or its `SESSION_SECRET` fallback); otherwise users must sign in again. The bot token is still required for Discord role synchronization, but membership checks for newly authorized users use their own Discord authorization.

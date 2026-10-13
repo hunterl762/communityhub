@@ -15,7 +15,7 @@ function beginDiscord(req,res){
   if(!process.env.DISCORD_CLIENT_ID||!process.env.DISCORD_CALLBACK_URL)return res.redirect('/auth/login?error=Discord+OAuth+is+not+configured');
   const state=crypto.randomBytes(24).toString('hex');
   req.session.discordOAuth={state};
-  const p=new URLSearchParams({client_id:process.env.DISCORD_CLIENT_ID,redirect_uri:process.env.DISCORD_CALLBACK_URL,response_type:'code',scope:'identify email',state,prompt:'consent'});
+  const p=new URLSearchParams({client_id:process.env.DISCORD_CLIENT_ID,redirect_uri:process.env.DISCORD_CALLBACK_URL,response_type:'code',scope:'identify email guilds.members.read',state,prompt:'consent'});
   res.redirect(`https://discord.com/oauth2/authorize?${p}`);
 }
 router.get('/discord',beginDiscord);
@@ -36,8 +36,9 @@ router.get('/discord/callback',async(req,res)=>{
       [user]=(await pool.query('SELECT * FROM users WHERE id=?',[existing[0].id]))[0];
     }else{
       let byEmail=[];
-      if(email)[byEmail]=await pool.query('SELECT * FROM users WHERE email=? LIMIT 1',[email]);
+      if(email&&profile.verified)[byEmail]=await pool.query('SELECT * FROM users WHERE email=? LIMIT 1',[email]);
       if(byEmail.length){
+        if(byEmail[0].discord_id&&byEmail[0].discord_id!==profile.id)throw Error('Email is already connected to a different Discord account');
         await pool.query('UPDATE users SET discord_id=?,discord_username=?,username=?,display_name=?,avatar_url=?,email_verified=? WHERE id=?',[profile.id,profile.username,profile.username,profile.global_name||profile.username,avatar,profile.verified?1:0,byEmail[0].id]);
         [user]=(await pool.query('SELECT * FROM users WHERE id=?',[byEmail[0].id]))[0];
       }else{
@@ -45,9 +46,9 @@ router.get('/discord/callback',async(req,res)=>{
         [user]=(await pool.query('SELECT * FROM users WHERE id=?',[result.insertId]))[0];
       }
     }
-    req.session.user=safeUser(user);
+    if(!user.is_active)throw Error('Account inactive');await require('../services/discordMembership').store(user.id,token.data);req.session.user=safeUser(user);
     res.redirect('/overview');
-  }catch(e){console.error('[Discord OAuth]',e.response?.data||e);res.redirect('/auth/login?error=Discord+authentication+failed');}
+  }catch(e){console.error('[Discord OAuth]',e.response?.status||e.code||'Sign-in failed');res.redirect('/auth/login?error=Discord+authentication+failed');}
 });
 router.post('/logout',(req,res)=>req.session.destroy(()=>res.redirect('/')));
 module.exports=router;
